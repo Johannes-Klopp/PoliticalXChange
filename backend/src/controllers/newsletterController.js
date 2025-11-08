@@ -63,7 +63,7 @@ exports.unsubscribe = async (req, res) => {
 exports.getSubscribers = async (req, res) => {
   try {
     const [subscribers] = await db.query(
-      'SELECT id, email, confirmed, subscribed_at FROM newsletter_subscriptions ORDER BY subscribed_at DESC'
+      'SELECT id, email, confirmed, created_at FROM newsletter_subscriptions ORDER BY created_at DESC'
     );
 
     res.json({ subscribers });

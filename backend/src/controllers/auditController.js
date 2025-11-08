@@ -6,17 +6,16 @@ exports.getAuditLogs = async (req, res) => {
     const { limit = 100, offset = 0 } = req.query;
 
     const [logs] = await db.query(
-      `SELECT 
-        id, 
-        action, 
-        table_name, 
-        record_id, 
-        user_id, 
-        ip_address, 
-        user_agent, 
-        created_at 
-      FROM audit_log 
-      ORDER BY created_at DESC 
+      `SELECT
+        id,
+        action,
+        entity_type,
+        entity_id,
+        details,
+        ip_address,
+        created_at
+      FROM audit_log
+      ORDER BY created_at DESC
       LIMIT ? OFFSET ?`,
       [parseInt(limit), parseInt(offset)]
     );

@@ -593,7 +593,7 @@ export default function AdminDashboard() {
                             )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                            {new Date(sub.subscribed_at).toLocaleDateString('de-DE')}
+                            {new Date(sub.created_at).toLocaleDateString('de-DE')}
                           </td>
                         </tr>
                       ))}
@@ -621,8 +621,8 @@ export default function AdminDashboard() {
                       <tr className="bg-gradient-to-r from-primary-50 to-primary-100 border-b border-primary-200">
                         <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Zeitstempel</th>
                         <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Aktion</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Tabelle</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Datensatz-ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Typ</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Entity-ID</th>
                         <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">IP-Adresse</th>
                       </tr>
                     </thead>
@@ -642,8 +642,8 @@ export default function AdminDashboard() {
                               {log.action}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{log.table_name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">{log.record_id || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{log.entity_type || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">{log.entity_id || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-mono text-xs">{log.ip_address || '-'}</td>
                         </tr>
                       ))}
