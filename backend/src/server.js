@@ -9,6 +9,8 @@ const candidatesRoutes = require('./routes/candidates');
 const votesRoutes = require('./routes/votes');
 const authRoutes = require('./routes/auth');
 const facilitiesRoutes = require('./routes/facilities');
+const newsletterRoutes = require('./routes/newsletter');
+const auditRoutes = require('./routes/audit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,6 +35,8 @@ app.use('/api/candidates', candidatesRoutes);
 app.use('/api/votes', votesRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/facilities', facilitiesRoutes);
+app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/audit', auditRoutes);
 
 // 404 handler
 app.use((req, res) => {

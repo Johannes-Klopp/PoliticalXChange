@@ -43,4 +43,12 @@ export const addFacility = (data) => api.post('/facilities', data);
 export const bulkAddFacilities = (facilities) => api.post('/facilities/bulk', { facilities });
 export const resendToken = (facilityId) => api.post(`/facilities/${facilityId}/resend-token`);
 
+// Newsletter
+export const subscribeNewsletter = (email) => api.post('/newsletter/subscribe', { email });
+export const unsubscribeNewsletter = (email) => api.post('/newsletter/unsubscribe', { email });
+export const getNewsletterSubscribers = () => api.get('/newsletter');
+
+// Audit Log
+export const getAuditLogs = (limit = 100, offset = 0) => api.get(`/audit?limit=${limit}&offset=${offset}`);
+
 export default api;

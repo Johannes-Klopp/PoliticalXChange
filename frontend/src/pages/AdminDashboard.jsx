@@ -8,6 +8,9 @@ import {
   exportResults,
   getFacilities,
   addFacility,
+  bulkUploadCandidates,
+  getAuditLogs,
+  getNewsletterSubscribers,
 } from '../services/api';
 
 export default function AdminDashboard() {
@@ -16,6 +19,8 @@ export default function AdminDashboard() {
   const [candidates, setCandidates] = useState([]);
   const [facilities, setFacilities] = useState([]);
   const [results, setResults] = useState({ results: [], totalVotes: 0 });
+  const [auditLogs, setAuditLogs] = useState([]);
+  const [newsletterSubscribers, setNewsletterSubscribers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -27,6 +32,8 @@ export default function AdminDashboard() {
   const [newFacility, setNewFacility] = useState({
     name: '', email: '', location: '',
   });
+
+  const [bulkCandidates, setBulkCandidates] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -49,6 +56,12 @@ export default function AdminDashboard() {
       } else if (activeTab === 'results') {
         const response = await getResults();
         setResults(response.data);
+      } else if (activeTab === 'audit') {
+        const response = await getAuditLogs(100, 0);
+        setAuditLogs(response.data.logs);
+      } else if (activeTab === 'newsletter') {
+        const response = await getNewsletterSubscribers();
+        setNewsletterSubscribers(response.data.subscribers);
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Fehler beim Laden');
@@ -101,6 +114,25 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleBulkUpload = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    try {
+      const lines = bulkCandidates.trim().split('\n');
+      const candidatesArray = lines.map(line => {
+        const [name, age, facility_name, facility_location, biography] = line.split(',').map(s => s.trim());
+        return { name, age: age || null, facility_name, facility_location, biography: biography || '' };
+      });
+      await bulkUploadCandidates(candidatesArray);
+      setSuccess(`${candidatesArray.length} Kandidaten erfolgreich hochgeladen`);
+      setBulkCandidates('');
+      loadData();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Fehler beim Bulk-Upload');
+    }
+  };
+
   const handleExportResults = async () => {
     try {
       const response = await exportResults();
@@ -118,8 +150,11 @@ export default function AdminDashboard() {
 
   const tabs = [
     { id: 'candidates', label: 'Kandidaten', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+    { id: 'bulk', label: 'Bulk Upload', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12' },
     { id: 'facilities', label: 'Einrichtungen', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
     { id: 'results', label: 'Ergebnisse', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+    { id: 'newsletter', label: 'Newsletter', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+    { id: 'audit', label: 'Audit Log', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
   ];
 
   return (
@@ -480,6 +515,146 @@ export default function AdminDashboard() {
                     </table>
                   </div>
                 </section>
+              </div>
+            )}
+
+            {/* Bulk Upload Tab */}
+            {activeTab === 'bulk' && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
+                  <h2 className="text-3xl font-extrabold text-gray-900">Bulk Upload Kandidaten</h2>
+                </div>
+                <form onSubmit={handleBulkUpload} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Kandidaten (CSV-Format: Name, Alter, Einrichtung, Standort, Biografie)
+                    </label>
+                    <textarea
+                      value={bulkCandidates}
+                      onChange={(e) => setBulkCandidates(e.target.value)}
+                      rows="10"
+                      placeholder="Max Mustermann, 25, Kinder- und Jugendheim Frankfurt, Frankfurt, Biografie...&#10;Anna Schmidt, 23, Jugendhilfe Kassel, Kassel, Biografie..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-mono text-sm"
+                      required
+                    />
+                    <p className="mt-2 text-sm text-gray-500">
+                      Ein Kandidat pro Zeile, Felder getrennt durch Kommas
+                    </p>
+                  </div>
+                  <button
+                    type="submit"
+                    className="group inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                    <span>Hochladen</span>
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* Newsletter Tab */}
+            {activeTab === 'newsletter' && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
+                  <h2 className="text-3xl font-extrabold text-gray-900">Newsletter-Abonnenten</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-gradient-to-r from-primary-50 to-primary-100 border-b border-primary-200">
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">E-Mail</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Angemeldet am</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {newsletterSubscribers.map((sub) => (
+                        <tr key={sub.id} className="hover:bg-primary-50/50 transition-colors duration-150">
+                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{sub.email}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {sub.confirmed ? (
+                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                                </svg>
+                                Bestätigt
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
+                                </svg>
+                                Ausstehend
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                            {new Date(sub.subscribed_at).toLocaleDateString('de-DE')}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {newsletterSubscribers.length === 0 && (
+                    <div className="text-center py-12 text-gray-500">
+                      Keine Abonnenten vorhanden
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Audit Log Tab */}
+            {activeTab === 'audit' && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
+                  <h2 className="text-3xl font-extrabold text-gray-900">Audit Log</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-gradient-to-r from-primary-50 to-primary-100 border-b border-primary-200">
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Zeitstempel</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Aktion</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Tabelle</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Datensatz-ID</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">IP-Adresse</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {auditLogs.map((log) => (
+                        <tr key={log.id} className="hover:bg-primary-50/50 transition-colors duration-150">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {new Date(log.created_at).toLocaleString('de-DE')}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                              log.action === 'INSERT' ? 'bg-green-100 text-green-800' :
+                              log.action === 'UPDATE' ? 'bg-blue-100 text-blue-800' :
+                              log.action === 'DELETE' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {log.action}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{log.table_name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">{log.record_id || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600 font-mono text-xs">{log.ip_address || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {auditLogs.length === 0 && (
+                    <div className="text-center py-12 text-gray-500">
+                      Keine Audit-Logs vorhanden
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </>
