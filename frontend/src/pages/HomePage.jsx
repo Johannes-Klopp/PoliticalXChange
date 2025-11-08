@@ -57,25 +57,23 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-gray-50">
-      {/* Header */}
-      <header className="relative bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white py-16 shadow-2xl overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-5"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-3 tracking-tight animate-fade-in">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
+      {/* Header - Clean Floating Design */}
+      <header className="container mx-auto px-4 pt-12 pb-12 max-w-7xl">
+        <div className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-2xl shadow-xl p-12 md:p-16">
+          <h1 className="text-5xl md:text-6xl font-bold text-center mb-3 tracking-tight text-white">
             Landesheimrat-Wahl
           </h1>
           <p className="text-center text-lg md:text-xl text-primary-100 font-light">
             Wahl des Landesheimrats Hessen 2025
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
       </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-16 max-w-7xl">
         {/* Info Section */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 mb-12 border border-gray-100 hover:shadow-xl transition-all duration-300" aria-labelledby="info-heading">
+        <section className="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-100 hover:shadow-xl transition-shadow duration-300" aria-labelledby="info-heading">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
               <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,8 +100,7 @@ export default function HomePage() {
 
         {/* Candidates Section */}
         <section aria-labelledby="candidates-heading">
-          <h2 id="candidates-heading" className="text-4xl font-extrabold mb-10 text-gray-900 flex items-center gap-3">
-            <span className="w-1 h-10 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></span>
+          <h2 id="candidates-heading" className="text-3xl font-bold mb-8 text-gray-900">
             Kandidaten
           </h2>
 
@@ -118,16 +115,15 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {candidates.map((candidate, index) => (
               <article
                 key={candidate.id}
-                className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-primary-200 hover:-translate-y-1"
+                className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-primary-300 hover:-translate-y-0.5"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="h-2 bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400 group-hover:from-primary-500 group-hover:to-primary-700 transition-all duration-300"></div>
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary-700 transition-colors duration-200">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
                     {candidate.name}
                   </h3>
 
@@ -163,11 +159,11 @@ export default function HomePage() {
 
                   <Link
                     to={`/candidate/${candidate.id}`}
-                    className="group/btn inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    className="group/btn inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                     aria-label={`Mehr über ${candidate.name} erfahren`}
                   >
                     <span>Mehr erfahren</span>
-                    <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                   </Link>
@@ -232,7 +228,7 @@ export default function HomePage() {
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="ihre.email@beispiel.de"
                 required
-                className="flex-1 px-6 py-4 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-4 focus:ring-white/30 focus:outline-none transition-all duration-200 shadow-lg"
+                className="flex-1 px-6 py-4 rounded-xl text-gray-900 placeholder-gray-400 bg-white focus:ring-4 focus:ring-white/30 focus:outline-none transition-all duration-200 shadow-lg font-medium"
               />
               <button
                 type="submit"

@@ -57,40 +57,38 @@ export default function CandidateDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50/30">
       {/* Header */}
-      <header className="relative bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 text-white py-12 shadow-2xl overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-5"></div>
-        <div className="container mx-auto px-4 relative z-10 max-w-4xl">
+      <header className="bg-gradient-to-br from-gray-50 via-white to-primary-50/30 py-12">
+        <div className="container mx-auto px-4 max-w-4xl">
           <button
             onClick={() => navigate('/')}
-            className="group inline-flex items-center gap-2 text-white/90 hover:text-white font-semibold transition-all duration-200 mb-6 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-xl"
+            className="group inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 mb-6"
           >
-            <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Zurück zur Übersicht
           </button>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2 text-gray-900">
             {candidate.name}
           </h1>
           {candidate.age && (
-            <p className="text-primary-100 text-lg font-light">{candidate.age} Jahre</p>
+            <p className="text-gray-600 text-lg">{candidate.age} Jahre</p>
           )}
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
       </header>
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Facility Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
               </div>
@@ -102,10 +100,10 @@ export default function CandidateDetailsPage() {
           </div>
 
           {/* Location Card */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
+          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
@@ -120,13 +118,10 @@ export default function CandidateDetailsPage() {
 
         {/* Biography Section */}
         {candidate.biography && (
-          <article className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
-              <h2 className="text-3xl font-extrabold text-gray-900">Vorstellung</h2>
-            </div>
+          <article className="bg-white rounded-xl shadow-md p-8 md:p-10 border border-gray-100 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Vorstellung</h2>
             <div className="prose prose-lg max-w-none">
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed text-lg">
+              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
                 {candidate.biography}
               </p>
             </div>
@@ -134,12 +129,12 @@ export default function CandidateDetailsPage() {
         )}
 
         {/* Back Button (Bottom) */}
-        <div className="mt-12 text-center">
+        <div className="text-center">
           <button
             onClick={() => navigate('/')}
-            className="group inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold py-3.5 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="group inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200"
           >
-            <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
             Zurück zur Übersicht
