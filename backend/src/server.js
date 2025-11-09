@@ -15,6 +15,9 @@ const auditRoutes = require('./routes/audit');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for Railway/reverse proxy
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(securityHeaders);
 app.use(cors({
