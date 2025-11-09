@@ -12,7 +12,6 @@ async function updateAdmin() {
     }
 
     const username = process.env.ADMIN_EMAIL;
-    const email = process.env.ADMIN_EMAIL;
     const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
     // Check if admin exists
@@ -21,21 +20,20 @@ async function updateAdmin() {
     if (admins.length > 0) {
       // Update existing admin
       await db.query(
-        'UPDATE admins SET username = ?, email = ?, password_hash = ? WHERE id = ?',
-        [username, email, passwordHash, admins[0].id]
+        'UPDATE admins SET username = ?, password_hash = ? WHERE id = ?',
+        [username, passwordHash, admins[0].id]
       );
       console.log('✅ Admin user updated successfully!');
     } else {
       // Create new admin
       await db.query(
-        'INSERT INTO admins (username, email, password_hash) VALUES (?, ?, ?)',
-        [username, email, passwordHash]
+        'INSERT INTO admins (username, password_hash) VALUES (?, ?)',
+        [username, passwordHash]
       );
       console.log('✅ Admin user created successfully!');
     }
 
     console.log(`   Username: ${username}`);
-    console.log(`   Email: ${email}`);
 
     process.exit(0);
   } catch (error) {

@@ -70,7 +70,6 @@ async function setupAdminIfNeeded() {
       CREATE TABLE IF NOT EXISTS admins (
         id INT PRIMARY KEY AUTO_INCREMENT,
         username VARCHAR(255) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE,
         password_hash VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -81,22 +80,21 @@ async function setupAdminIfNeeded() {
 
     if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
       const username = process.env.ADMIN_EMAIL;
-      const email = process.env.ADMIN_EMAIL;
       const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
       if (admins.length === 0) {
         // Create new admin
         await db.query(
-          'INSERT INTO admins (username, email, password_hash) VALUES (?, ?, ?)',
-          [username, email, passwordHash]
+          'INSERT INTO admins (username, password_hash) VALUES (?, ?)',
+          [username, passwordHash]
         );
         console.log('✅ Admin user created automatically');
         console.log(`   Username: ${username}`);
       } else if (admins[0].username !== username) {
         // Update existing admin with new credentials
         await db.query(
-          'UPDATE admins SET username = ?, email = ?, password_hash = ? WHERE id = ?',
-          [username, email, passwordHash, admins[0].id]
+          'UPDATE admins SET username = ?, password_hash = ? WHERE id = ?',
+          [username, passwordHash, admins[0].id]
         );
         console.log('✅ Admin user updated automatically');
         console.log(`   Username: ${username}`);
