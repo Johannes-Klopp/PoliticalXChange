@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const { securityHeaders, apiLimiter, auditLog } = require('./middleware/security');
+const db = require('./config/database');
 
 // Import routes
 const candidatesRoutes = require('./routes/candidates');
@@ -60,11 +62,49 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Auto-setup admin user on first start
+async function setupAdminIfNeeded() {
+  try {
+    // Create admin table if not exists
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Check if admin exists
+    const [admins] = await db.query('SELECT * FROM admins LIMIT 1');
+
+    if (admins.length === 0 && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+      const username = process.env.ADMIN_EMAIL;
+      const email = process.env.ADMIN_EMAIL;
+      const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+
+      await db.query(
+        'INSERT INTO admins (username, email, password_hash) VALUES (?, ?, ?)',
+        [username, email, passwordHash]
+      );
+
+      console.log('✅ Admin user created automatically');
+      console.log(`   Username: ${username}`);
+    }
+  } catch (error) {
+    console.error('⚠️  Error setting up admin:', error.message);
+  }
+}
+
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`\n🚀 Server läuft auf Port ${PORT}`);
   console.log(`📝 Environment: ${process.env.NODE_ENV}`);
   console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}\n`);
+
+  // Setup admin on first start
+  await setupAdminIfNeeded();
 });
 
 // Graceful shutdown
