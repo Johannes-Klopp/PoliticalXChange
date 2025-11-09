@@ -5,14 +5,8 @@ require('dotenv').config();
 let poolConfig;
 
 if (process.env.DATABASE_URL) {
-  // Parse DATABASE_URL (format: mysql://user:password@host:port/database)
-  poolConfig = {
-    uri: process.env.DATABASE_URL,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    charset: 'utf8mb4'
-  };
+  // Use DATABASE_URL directly as connection string
+  poolConfig = process.env.DATABASE_URL;
 } else {
   poolConfig = {
     host: process.env.DB_HOST,
