@@ -198,6 +198,9 @@ async function initializeDatabaseSchema() {
         console.log('   Username: admin');
         console.log('   Password: ChangeMeNow123!');
         console.log('   ⚠️  CHANGE THIS PASSWORD IMMEDIATELY!');
+      } else {
+        console.log('ℹ️  Admin user already exists');
+        console.log(`   Username: ${admins[0].username}`);
       }
     }
   } catch (error) {
