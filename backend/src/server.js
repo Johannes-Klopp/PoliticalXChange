@@ -165,9 +165,12 @@ async function initializeDatabaseSchema() {
     console.log('✅ Database schema initialized');
 
     // Setup admin user
+    console.log('🔍 Checking for existing admin users...');
     const [admins] = await db.query('SELECT * FROM admins LIMIT 1');
+    console.log(`   Found ${admins.length} admin(s)`);
 
     if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+      console.log('   Using ADMIN_EMAIL and ADMIN_PASSWORD from env');
       const username = process.env.ADMIN_EMAIL;
       const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
@@ -185,8 +188,12 @@ async function initializeDatabaseSchema() {
         );
         console.log('✅ Admin user updated');
         console.log(`   Username: ${username}`);
+      } else {
+        console.log('ℹ️  Admin user already up to date');
+        console.log(`   Username: ${username}`);
       }
     } else {
+      console.log('   No ADMIN_EMAIL/ADMIN_PASSWORD env vars, using default');
       // Fallback: Create default admin if no env vars set
       if (admins.length === 0) {
         const defaultPasswordHash = '$2a$10$rQUeVhG5yGz6YhqK5xJYWuXMF8qL.nZ7WVZ9xGp0qYvKqF8yL5QZ.';
@@ -204,7 +211,9 @@ async function initializeDatabaseSchema() {
       }
     }
   } catch (error) {
-    console.error('❌ Error initializing database:', error.message);
+    console.error('❌ Error initializing database:');
+    console.error('   Message:', error.message);
+    console.error('   Stack:', error.stack);
     // Don't exit - let the app continue running
   }
 }
