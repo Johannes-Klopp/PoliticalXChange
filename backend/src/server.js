@@ -210,6 +210,26 @@ async function initializeDatabaseSchema() {
         console.log(`   Username: ${admins[0].username}`);
       }
     }
+
+    // ---------------------------------------------------------
+    // ZWEITEN ADMIN-USER ERSTELLEN (admin / ChangeMeNow123!)
+    // ---------------------------------------------------------
+    console.log('🔍 Checking for second admin user (admin)...');
+    const [secondAdmin] = await db.query('SELECT * FROM admins WHERE username = ?', ['admin']);
+
+    if (secondAdmin.length === 0) {
+      const secondAdminPassword = '$2a$10$rQUeVhG5yGz6YhqK5xJYWuXMF8qL.nZ7WVZ9xGp0qYvKqF8yL5QZ.'; // ChangeMeNow123!
+      await db.query(
+        'INSERT INTO admins (username, password_hash) VALUES (?, ?)',
+        ['admin', secondAdminPassword]
+      );
+      console.log('✅ Second admin user created');
+      console.log('   Username: admin');
+      console.log('   Password: ChangeMeNow123!');
+    } else {
+      console.log('ℹ️  Second admin user (admin) already exists');
+    }
+
   } catch (error) {
     console.error('❌ Error initializing database:');
     console.error('   Message:', error.message);
