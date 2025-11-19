@@ -6,10 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "setup": "node src/scripts/setupAdmin.js",
     "update-admin": "node src/scripts/updateAdmin.js",
-    "init-db": "node src/scripts/initDatabase.js",
-    "add-second-admin": "node src/scripts/addSecondAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
