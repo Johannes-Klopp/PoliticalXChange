@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "setup": "node src/scripts/setupAdmin.js",
     "update-admin": "node src/scripts/updateAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
