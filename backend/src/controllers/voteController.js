@@ -1,28 +1,43 @@
 const db = require('../config/database');
 const crypto = require('crypto');
 
-// Submit a vote
+// Submit a vote (up to 8 candidates)
 const submitVote = async (req, res) => {
   const connection = await db.getConnection();
 
   try {
     await connection.beginTransaction();
 
-    const { token, candidateId } = req.body;
+    const { token, candidateIds } = req.body;
 
     // Verify token hasn't been used (from middleware)
     const votingToken = req.votingToken;
 
-    // Verify candidate exists
+    // Validate candidateIds array
+    if (!Array.isArray(candidateIds) || candidateIds.length === 0) {
+      await connection.rollback();
+      return res.status(400).json({ error: 'Mindestens ein Kandidat muss ausgewählt werden' });
+    }
+
+    if (candidateIds.length > 8) {
+      await connection.rollback();
+      return res.status(400).json({ error: 'Maximal 8 Kandidaten können gewählt werden' });
+    }
+
+    // Verify all candidates exist
+    const placeholders = candidateIds.map(() => '?').join(',');
     const [candidates] = await connection.query(
-      'SELECT id FROM candidates WHERE id = ?',
-      [candidateId]
+      `SELECT id FROM candidates WHERE id IN (${placeholders})`,
+      candidateIds
     );
 
-    if (candidates.length === 0) {
+    if (candidates.length !== candidateIds.length) {
       await connection.rollback();
-      return res.status(404).json({ error: 'Kandidat nicht gefunden' });
+      return res.status(404).json({ error: 'Ein oder mehrere Kandidaten nicht gefunden' });
     }
+
+    // Generate unique session ID for this vote
+    const voteSessionId = crypto.randomBytes(32).toString('hex');
 
     // Mark token as used
     const ip = req.ip || req.connection.remoteAddress;
@@ -31,17 +46,20 @@ const submitVote = async (req, res) => {
       [ip, votingToken.id]
     );
 
-    // Record vote (anonymized - no link to token/email)
-    await connection.query(
-      'INSERT INTO votes (candidate_id) VALUES (?)',
-      [candidateId]
-    );
+    // Record votes (anonymized - no link to token/email)
+    for (const candidateId of candidateIds) {
+      await connection.query(
+        'INSERT INTO votes (vote_session_id, candidate_id) VALUES (?, ?)',
+        [voteSessionId, candidateId]
+      );
+    }
 
     await connection.commit();
 
     res.json({
-      message: 'Ihre Stimme wurde erfolgreich abgegeben',
-      success: true
+      message: `Ihre ${candidateIds.length} Stimme(n) wurde(n) erfolgreich abgegeben`,
+      success: true,
+      votedCount: candidateIds.length
     });
   } catch (error) {
     await connection.rollback();

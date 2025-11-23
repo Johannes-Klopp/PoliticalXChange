@@ -28,7 +28,7 @@ export const bulkUploadCandidates = (candidates) => api.post('/candidates/bulk',
 
 // Voting
 export const verifyVotingToken = (token) => api.get(`/votes/verify-token?token=${token}`);
-export const submitVote = (token, candidateId) => api.post('/votes/submit', { token, candidateId });
+export const submitVote = (token, candidateIds) => api.post('/votes/submit', { token, candidateIds });
 export const getResults = () => api.get('/votes/results');
 export const exportResults = () => api.get('/votes/export', { responseType: 'blob' });
 
@@ -44,7 +44,7 @@ export const bulkAddFacilities = (facilities) => api.post('/facilities/bulk', { 
 export const resendToken = (facilityId) => api.post(`/facilities/${facilityId}/resend-token`);
 
 // Newsletter
-export const subscribeNewsletter = (email) => api.post('/newsletter/subscribe', { email });
+export const subscribeNewsletter = (data) => api.post('/newsletter/subscribe', data);
 export const unsubscribeNewsletter = (email) => api.post('/newsletter/unsubscribe', { email });
 export const getNewsletterSubscribers = () => api.get('/newsletter');
 

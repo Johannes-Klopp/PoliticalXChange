@@ -11,6 +11,7 @@ import {
   bulkUploadCandidates,
   getAuditLogs,
   getNewsletterSubscribers,
+  subscribeNewsletter,
 } from '../services/api';
 
 export default function AdminDashboard() {
@@ -31,6 +32,10 @@ export default function AdminDashboard() {
 
   const [newFacility, setNewFacility] = useState({
     name: '', email: '', location: '',
+  });
+
+  const [newNewsletterSub, setNewNewsletterSub] = useState({
+    email: '', groupName: '', facilityName: '', region: '',
   });
 
   const [bulkCandidates, setBulkCandidates] = useState('');
@@ -557,53 +562,129 @@ export default function AdminDashboard() {
 
             {/* Newsletter Tab */}
             {activeTab === 'newsletter' && (
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
-                  <h2 className="text-3xl font-extrabold text-gray-900">Newsletter-Abonnenten</h2>
+              <div className="space-y-8">
+                {/* Neue Wohngruppe registrieren */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
+                    <h2 className="text-3xl font-extrabold text-gray-900">Wohngruppe registrieren</h2>
+                  </div>
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setLoading(true);
+                      setError('');
+                      setSuccess('');
+                      try {
+                        await subscribeNewsletter(newNewsletterSub);
+                        setSuccess('Wohngruppe erfolgreich registriert');
+                        setNewNewsletterSub({ email: '', groupName: '', facilityName: '', region: '' });
+                        const response = await getNewsletterSubscribers();
+                        setNewsletterSubscribers(response.data.subscribers);
+                      } catch (err) {
+                        setError(err.response?.data?.error || 'Fehler beim Registrieren');
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Wohngruppenname"
+                      value={newNewsletterSub.groupName}
+                      onChange={(e) => setNewNewsletterSub({ ...newNewsletterSub, groupName: e.target.value })}
+                      required
+                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Einrichtungsname"
+                      value={newNewsletterSub.facilityName}
+                      onChange={(e) => setNewNewsletterSub({ ...newNewsletterSub, facilityName: e.target.value })}
+                      required
+                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Region (optional)"
+                      value={newNewsletterSub.region}
+                      onChange={(e) => setNewNewsletterSub({ ...newNewsletterSub, region: e.target.value })}
+                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <input
+                      type="email"
+                      placeholder="E-Mail-Adresse"
+                      value={newNewsletterSub.email}
+                      onChange={(e) => setNewNewsletterSub({ ...newNewsletterSub, email: e.target.value })}
+                      required
+                      className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="md:col-span-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white py-3 px-6 rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 disabled:opacity-50"
+                    >
+                      Wohngruppe registrieren
+                    </button>
+                  </form>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gradient-to-r from-primary-50 to-primary-100 border-b border-primary-200">
-                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">E-Mail</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Status</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Angemeldet am</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {newsletterSubscribers.map((sub) => (
-                        <tr key={sub.id} className="hover:bg-primary-50/50 transition-colors duration-150">
-                          <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{sub.email}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {sub.confirmed ? (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                                </svg>
-                                Bestätigt
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
-                                </svg>
-                                Ausstehend
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
-                            {new Date(sub.created_at).toLocaleDateString('de-DE')}
-                          </td>
+
+                {/* Registrierte Wohngruppen */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
+                    <h2 className="text-3xl font-extrabold text-gray-900">Registrierte Wohngruppen</h2>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-gradient-to-r from-primary-50 to-primary-100 border-b border-primary-200">
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Wohngruppe</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Einrichtung</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Region</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">E-Mail</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Angemeldet</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {newsletterSubscribers.length === 0 && (
-                    <div className="text-center py-12 text-gray-500">
-                      Keine Abonnenten vorhanden
-                    </div>
-                  )}
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {newsletterSubscribers.map((sub) => (
+                          <tr key={sub.id} className="hover:bg-primary-50/50 transition-colors duration-150">
+                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{sub.group_name || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-700">{sub.facility_name || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">{sub.region || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-700">{sub.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {sub.confirmed ? (
+                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                                  </svg>
+                                  Bestätigt
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
+                                  </svg>
+                                  Ausstehend
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                              {new Date(sub.created_at).toLocaleDateString('de-DE')}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {newsletterSubscribers.length === 0 && (
+                      <div className="text-center py-12 text-gray-500">
+                        Keine Wohngruppen registriert
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

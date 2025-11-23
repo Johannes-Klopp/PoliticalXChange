@@ -44,12 +44,15 @@ CREATE TABLE voting_tokens (
 ) ENGINE=InnoDB;
 
 -- Votes Tabelle (Anonymisiert - keine Zuordnung zu Email/Token)
+-- Eine Stimme kann bis zu 8 Kandidaten enthalten
 CREATE TABLE votes (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    vote_session_id VARCHAR(64) NOT NULL,
     candidate_id INT NOT NULL,
     voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE,
-    INDEX idx_candidate (candidate_id)
+    INDEX idx_candidate (candidate_id),
+    INDEX idx_session (vote_session_id)
 ) ENGINE=InnoDB;
 
 -- Admin Tabelle
@@ -64,12 +67,16 @@ CREATE TABLE admins (
 CREATE TABLE newsletter_subscriptions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
+    group_name VARCHAR(255) NOT NULL,
+    facility_name VARCHAR(255) NOT NULL,
+    region VARCHAR(255),
     confirmed BOOLEAN DEFAULT FALSE,
     confirmation_token VARCHAR(512),
     confirmed_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_email (email),
-    INDEX idx_confirmed (confirmed)
+    INDEX idx_confirmed (confirmed),
+    INDEX idx_facility (facility_name)
 ) ENGINE=InnoDB;
 
 -- Audit Log für Sicherheit

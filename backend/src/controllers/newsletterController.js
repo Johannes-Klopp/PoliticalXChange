@@ -1,13 +1,22 @@
 const db = require('../config/database');
-const { sendNewsletterConfirmation } = require('../utils/email');
+const { sendNewsletterConfirmationEmail } = require('../utils/email');
 
 // Subscribe to newsletter
 exports.subscribe = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, groupName, facilityName, region } = req.body;
 
+    // Validation
     if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       return res.status(400).json({ error: 'Gültige E-Mail-Adresse erforderlich' });
+    }
+
+    if (!groupName || groupName.trim().length === 0) {
+      return res.status(400).json({ error: 'Wohngruppenname erforderlich' });
+    }
+
+    if (!facilityName || facilityName.trim().length === 0) {
+      return res.status(400).json({ error: 'Einrichtungsname erforderlich' });
     }
 
     // Check if already subscribed
@@ -21,19 +30,19 @@ exports.subscribe = async (req, res) => {
         return res.status(400).json({ error: 'Diese E-Mail-Adresse ist bereits registriert' });
       } else {
         // Resend confirmation
-        await sendNewsletterConfirmation(email);
+        await sendNewsletterConfirmationEmail(email, `${process.env.FRONTEND_URL}/newsletter/confirm`);
         return res.json({ message: 'Bestätigungs-E-Mail erneut gesendet' });
       }
     }
 
-    // Create subscription
+    // Create subscription with group information
     await db.query(
-      'INSERT INTO newsletter_subscriptions (email) VALUES (?)',
-      [email]
+      'INSERT INTO newsletter_subscriptions (email, group_name, facility_name, region) VALUES (?, ?, ?, ?)',
+      [email, groupName.trim(), facilityName.trim(), region?.trim() || null]
     );
 
     // Send confirmation email
-    await sendNewsletterConfirmation(email);
+    await sendNewsletterConfirmationEmail(email, `${process.env.FRONTEND_URL}/newsletter/confirm`);
 
     res.json({ message: 'Vielen Dank! Bitte bestätigen Sie Ihre E-Mail-Adresse.' });
   } catch (error) {
@@ -63,7 +72,7 @@ exports.unsubscribe = async (req, res) => {
 exports.getSubscribers = async (req, res) => {
   try {
     const [subscribers] = await db.query(
-      'SELECT id, email, confirmed, created_at FROM newsletter_subscriptions ORDER BY created_at DESC'
+      'SELECT id, email, group_name, facility_name, region, confirmed, created_at FROM newsletter_subscriptions ORDER BY created_at DESC'
     );
 
     res.json({ subscribers });
