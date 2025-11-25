@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
-// Email sending via Lettermint SMTP
+// Email sending via Lettermint API
 const sendEmail = async ({ to, subject, html, text }) => {
   try {
     // Test mode: Log email instead of sending (wenn keine API-Key vorhanden)
@@ -13,44 +13,45 @@ const sendEmail = async ({ to, subject, html, text }) => {
       return { success: true, messageId: 'test-mode-' + Date.now() };
     }
 
-    // Production: Lettermint SMTP
-    const fromEmail = process.env.LETTERMINT_FROM_EMAIL || 'noreply@landesheimrat-wahl.de';
+    // Production: Lettermint API
+    const fromEmail = process.env.LETTERMINT_FROM_EMAIL || 'noreply@politicalxchange.com';
     const fromName = process.env.LETTERMINT_FROM_NAME || 'Landesheimrat-Wahl';
 
-    console.log('📧 Sending email via Lettermint SMTP to:', to);
+    console.log('📧 Sending email via Lettermint API to:', to);
 
-    // Lettermint SMTP Configuration
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.lettermint.co',
-      port: 587,
-      secure: false, // STARTTLS
-      auth: {
-        user: 'lettermint',
-        pass: process.env.LETTERMINT_API_KEY,
-      },
-    });
-
-    const mailOptions = {
-      from: `"${fromName}" <${fromEmail}>`,
-      to,
-      subject,
-      text,
-      html,
+    const response = await fetch('https://api.lettermint.co/v1/emails', {
+      method: 'POST',
       headers: {
-        'X-LM-Tag': 'landesheimrat-wahl',
-      }
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log('✅ Email sent successfully via Lettermint SMTP:', {
-      to,
-      subject,
-      messageId: info.messageId,
-      response: info.response
+        'Authorization': `Bearer ${process.env.LETTERMINT_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: {
+          email: fromEmail,
+          name: fromName
+        },
+        to: [{ email: to }],
+        subject: subject,
+        html: html,
+        text: text,
+        tags: ['landesheimrat-wahl']
+      })
     });
 
-    return { success: true, messageId: info.messageId, info };
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(`Lettermint API error: ${response.status} - ${errorData}`);
+    }
+
+    const data = await response.json();
+
+    console.log('✅ Email sent successfully via Lettermint API:', {
+      to,
+      subject,
+      messageId: data.id
+    });
+
+    return { success: true, messageId: data.id, data };
 
   } catch (error) {
     console.error('❌ Email sending failed:', {
