@@ -36,7 +36,10 @@ exports.subscribe = async (req, res) => {
     );
 
     // Send welcome/confirmation email (not a confirmation link, just info)
-    await sendNewsletterWelcomeEmail(email, groupName.trim());
+    // Don't await - send in background to avoid blocking the response
+    sendNewsletterWelcomeEmail(email, groupName.trim()).catch(err => {
+      console.error('Failed to send welcome email:', err.message);
+    });
 
     res.json({ message: 'Vielen Dank für Ihre Anmeldung!' });
   } catch (error) {
