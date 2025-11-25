@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { subscribeNewsletter } from '../services/api';
 
 export default function NewsletterSubscription() {
+  const [passwordUnlocked, setPasswordUnlocked] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     groupName: '',
@@ -13,6 +16,20 @@ export default function NewsletterSubscription() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    setPasswordError('');
+
+    // Check password (client-side pre-check)
+    const REGISTRATION_PASSWORD = 'Landesheimrat2025';
+    if (passwordInput === REGISTRATION_PASSWORD) {
+      setPasswordUnlocked(true);
+      setFormData({ ...formData, password: passwordInput });
+    } else {
+      setPasswordError('Ungültiges Passwort');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,22 +87,80 @@ export default function NewsletterSubscription() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-3xl">
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          {/* Info Section */}
-          <div className="mb-8 p-4 bg-primary-50 rounded-lg border border-primary-100">
-            <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              <p className="text-sm text-primary-900 leading-relaxed">
-                Melden Sie Ihre Wohngruppe für den Newsletter an, um wichtige Updates zur Landesheimrat-Wahl zu erhalten.
-                Sie erhalten eine Bestätigungs-E-Mail mit weiteren Informationen.
-              </p>
+        {!passwordUnlocked ? (
+          /* Password Entry Screen */
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <div className="max-w-md mx-auto">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+                  <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Zugang erforderlich</h2>
+                <p className="text-gray-600">
+                  Bitte geben Sie das Registrierungspasswort ein, um sich für den Newsletter anzumelden.
+                </p>
+              </div>
+
+              {passwordError && (
+                <div className="mb-6 bg-red-50 border-l-4 border-red-500 text-red-800 px-4 py-3 rounded" role="alert">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
+                    </svg>
+                    <p className="text-sm font-medium">{passwordError}</p>
+                  </div>
+                </div>
+              )}
+
+              <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="passwordInput" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Passwort
+                  </label>
+                  <input
+                    type="password"
+                    id="passwordInput"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    placeholder="Passwort eingeben"
+                    autoFocus
+                  />
+                  <p className="mt-2 text-xs text-gray-500">
+                    Sie haben das Passwort per E-Mail oder Brief erhalten
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                >
+                  Weiter
+                </button>
+              </form>
             </div>
           </div>
+        ) : (
+          /* Newsletter Registration Form */
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            {/* Info Section */}
+            <div className="mb-8 p-4 bg-primary-50 rounded-lg border border-primary-100">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p className="text-sm text-primary-900 leading-relaxed">
+                  Melden Sie Ihre Wohngruppe für den Newsletter an, um wichtige Updates zur Landesheimrat-Wahl zu erhalten.
+                  Sie erhalten eine Bestätigungs-E-Mail mit weiteren Informationen.
+                </p>
+              </div>
+            </div>
 
-          {/* Success Message */}
-          {success && (
+            {/* Success Message */}
+            {success && (
             <div className="mb-6 bg-green-50 border-l-4 border-green-500 text-green-800 px-6 py-4 rounded-lg shadow-md" role="alert">
               <div className="flex items-start gap-3">
                 <svg className="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -113,26 +188,6 @@ export default function NewsletterSubscription() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                Registrierungspasswort <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                placeholder="Passwort eingeben"
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                Sie haben das Passwort per E-Mail oder Brief erhalten
-              </p>
-            </div>
-
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
@@ -231,7 +286,8 @@ export default function NewsletterSubscription() {
               Ihre Daten werden ausschließlich für den Versand von Informationen zur Landesheimrat-Wahl verwendet und nicht an Dritte weitergegeben.
             </p>
           </div>
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );
