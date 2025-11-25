@@ -16,13 +16,16 @@ const sendEmail = async ({ to, subject, html, text }) => {
     // Production: Lettermint API
     const fromEmail = process.env.LETTERMINT_FROM_EMAIL || 'noreply@politicalxchange.com';
     const fromName = process.env.LETTERMINT_FROM_NAME || 'Landesheimrat-Wahl';
+    const apiKey = process.env.LETTERMINT_API_KEY;
 
     console.log('📧 Sending email via Lettermint API to:', to);
+    console.log('   API Key present:', apiKey ? 'Yes (length: ' + apiKey.length + ')' : 'No');
+    console.log('   API Key starts with:', apiKey ? apiKey.substring(0, 10) + '...' : 'N/A');
 
     const response = await fetch('https://api.lettermint.co/v1/send', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.LETTERMINT_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
