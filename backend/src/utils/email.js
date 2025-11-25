@@ -23,11 +23,8 @@ const sendEmail = async ({ to, subject, html, text }) => {
     console.log('   API Key starts with:', apiKey ? apiKey.substring(0, 10) + '...' : 'N/A');
 
     const requestBody = {
-      from: {
-        email: fromEmail,
-        name: fromName
-      },
-      to: [{ email: to }],
+      from: `${fromName} <${fromEmail}>`,
+      to: [to],
       subject: subject,
       html: html,
       text: text
