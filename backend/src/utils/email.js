@@ -53,13 +53,14 @@ const sendEmail = async ({ to, subject, html, text }) => {
     return { success: true, messageId: info.messageId, info };
 
   } catch (error) {
-    console.error('❌ Email sending failed:', error.message);
-    // Im Development-Mode trotzdem weitermachen
-    if (process.env.NODE_ENV === 'development') {
-      console.log('⚠️  Development mode: Continuing despite email error');
-      return { success: false, error: error.message };
-    }
-    throw error;
+    console.error('❌ Email sending failed:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    // Im Development-Mode UND Production trotzdem weitermachen (nicht blockieren)
+    console.log('⚠️  Continuing despite email error (non-blocking)');
+    return { success: false, error: error.message };
   }
 };
 
