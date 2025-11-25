@@ -154,12 +154,16 @@ async function initializeDatabaseSchema() {
 
     // Add missing columns to existing newsletter_subscriptions table (migration)
     try {
-      await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN IF NOT EXISTS group_name VARCHAR(255)`);
-      await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN IF NOT EXISTS facility_name VARCHAR(255)`);
-      await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN IF NOT EXISTS region VARCHAR(255)`);
+      // Check if columns exist, if not add them
+      const [columns] = await db.query(`SHOW COLUMNS FROM newsletter_subscriptions LIKE 'group_name'`);
+      if (columns.length === 0) {
+        await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN group_name VARCHAR(255)`);
+        await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN facility_name VARCHAR(255)`);
+        await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN region VARCHAR(255)`);
+        console.log('   ✅ Newsletter columns added successfully');
+      }
     } catch (err) {
-      // Columns might already exist, ignore error
-      console.log('   Newsletter columns migration: already exists or error:', err.message);
+      console.log('   ⚠️  Newsletter columns migration error:', err.message);
     }
 
     // Create audit_log table
