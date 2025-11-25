@@ -19,7 +19,7 @@ const sendEmail = async ({ to, subject, html, text }) => {
 
     console.log('📧 Sending email via Lettermint API to:', to);
 
-    const response = await fetch('https://api.lettermint.co/v1/emails', {
+    const response = await fetch('https://api.lettermint.co/v1/send', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.LETTERMINT_API_KEY}`,
