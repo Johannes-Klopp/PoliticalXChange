@@ -7,7 +7,8 @@ export default function NewsletterSubscription() {
     email: '',
     groupName: '',
     facilityName: '',
-    region: ''
+    region: '',
+    password: ''
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -26,7 +27,8 @@ export default function NewsletterSubscription() {
         email: '',
         groupName: '',
         facilityName: '',
-        region: ''
+        region: '',
+        password: ''
       });
     } catch (err) {
       setError(err.response?.data?.error || 'Fehler beim Anmelden. Bitte versuchen Sie es erneut.');
@@ -111,6 +113,26 @@ export default function NewsletterSubscription() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                Registrierungspasswort <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                placeholder="Passwort eingeben"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Sie haben das Passwort per E-Mail oder Brief erhalten
+              </p>
+            </div>
+
             {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">

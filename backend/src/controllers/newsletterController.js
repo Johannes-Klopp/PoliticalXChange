@@ -4,7 +4,13 @@ const { sendNewsletterWelcomeEmail } = require('../utils/email');
 // Subscribe to newsletter
 exports.subscribe = async (req, res) => {
   try {
-    const { email, groupName, facilityName, region } = req.body;
+    const { email, groupName, facilityName, region, password } = req.body;
+
+    // Password protection
+    const REGISTRATION_PASSWORD = process.env.NEWSLETTER_PASSWORD || 'Landesheimrat2025';
+    if (password !== REGISTRATION_PASSWORD) {
+      return res.status(401).json({ error: 'Ungültiges Passwort' });
+    }
 
     // Validation
     if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
