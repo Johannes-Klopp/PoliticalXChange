@@ -22,23 +22,26 @@ const sendEmail = async ({ to, subject, html, text }) => {
     console.log('   API Key present:', apiKey ? 'Yes (length: ' + apiKey.length + ')' : 'No');
     console.log('   API Key starts with:', apiKey ? apiKey.substring(0, 10) + '...' : 'N/A');
 
+    const requestBody = {
+      from: {
+        email: fromEmail,
+        name: fromName
+      },
+      to: [{ email: to }],
+      subject: subject,
+      html: html,
+      text: text
+    };
+
+    console.log('   Request body:', JSON.stringify(requestBody, null, 2));
+
     const response = await fetch('https://api.lettermint.co/v1/send', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'x-lettermint-token': apiKey,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        from: {
-          email: fromEmail,
-          name: fromName
-        },
-        to: [{ email: to }],
-        subject: subject,
-        html: html,
-        text: text,
-        tags: ['landesheimrat-wahl']
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
