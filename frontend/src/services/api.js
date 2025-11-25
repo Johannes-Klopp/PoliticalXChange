@@ -47,6 +47,7 @@ export const resendToken = (facilityId) => api.post(`/facilities/${facilityId}/r
 export const subscribeNewsletter = (data) => api.post('/newsletter/subscribe', data);
 export const unsubscribeNewsletter = (email) => api.post('/newsletter/unsubscribe', { email });
 export const getNewsletterSubscribers = () => api.get('/newsletter');
+export const deleteNewsletterSubscriber = (id) => api.delete(`/newsletter/${id}`);
 
 // Audit Log
 export const getAuditLogs = (limit = 100, offset = 0) => api.get(`/audit?limit=${limit}&offset=${offset}`);

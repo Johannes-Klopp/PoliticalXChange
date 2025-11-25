@@ -12,6 +12,7 @@ import {
   getAuditLogs,
   getNewsletterSubscribers,
   subscribeNewsletter,
+  deleteNewsletterSubscriber,
 } from '../services/api';
 
 export default function AdminDashboard() {
@@ -644,8 +645,8 @@ export default function AdminDashboard() {
                           <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Einrichtung</th>
                           <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Region</th>
                           <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">E-Mail</th>
-                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Status</th>
                           <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Angemeldet</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-primary-900 uppercase tracking-wider">Aktionen</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
@@ -655,25 +656,27 @@ export default function AdminDashboard() {
                             <td className="px-6 py-4 whitespace-nowrap text-gray-700">{sub.facility_name || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-600">{sub.region || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-700">{sub.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {sub.confirmed ? (
-                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                                  </svg>
-                                  Bestätigt
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
-                                  </svg>
-                                  Ausstehend
-                                </span>
-                              )}
-                            </td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-600">
                               {new Date(sub.created_at).toLocaleDateString('de-DE')}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <button
+                                onClick={async () => {
+                                  if (!window.confirm('Newsletter-Anmeldung wirklich löschen?')) return;
+                                  try {
+                                    await deleteNewsletterSubscriber(sub.id);
+                                    setSuccess('Anmeldung erfolgreich gelöscht');
+                                    loadData();
+                                  } catch (err) {
+                                    setError(err.response?.data?.error || 'Fehler beim Löschen');
+                                  }
+                                }}
+                                className="text-red-600 hover:text-red-800 font-medium transition-colors"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                              </button>
                             </td>
                           </tr>
                         ))}

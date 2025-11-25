@@ -128,16 +128,23 @@ Das Landesheimrat-Wahl Team
   return sendEmail({ to: email, subject, text, html });
 };
 
-// Send newsletter confirmation email
-const sendNewsletterConfirmationEmail = async (email, confirmationLink) => {
-  const subject = 'Newsletter-Anmeldung bestätigen';
+// Send newsletter welcome email (automatic confirmation)
+const sendNewsletterWelcomeEmail = async (email, groupName) => {
+  const subject = 'Newsletter-Anmeldung bestätigt - Landesheimrat-Wahl';
   const text = `
-Bitte bestätigen Sie Ihre Newsletter-Anmeldung für Updates zur Landesheimrat-Wahl.
+Hallo ${groupName},
 
-Bestätigungslink:
-${confirmationLink}
+hiermit bestätigen wir Ihre Anmeldung für Updates zur Landesheimrat-Wahl.
 
-Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail bitte.
+Sie erhalten in Kürze weitere Informationen zur Wahl, einschließlich:
+- Eine Erinnerung vor Beginn der Wahl
+- Wichtige Updates zum Wahlablauf
+- Informationen zu den Kandidaten
+
+Bei Fragen wenden Sie sich bitte an das Hessische Ministerium für Arbeit, Integration, Jugend und Soziales.
+
+Mit freundlichen Grüßen
+Das Landesheimrat-Wahl Team
   `;
 
   const html = `
@@ -145,20 +152,29 @@ Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail bitte.
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Newsletter-Anmeldung bestätigen</title>
+  <title>Newsletter-Anmeldung bestätigt</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <h1 style="color: #0369a1;">Newsletter-Anmeldung bestätigen</h1>
-  <p>Bitte bestätigen Sie Ihre Newsletter-Anmeldung für Updates zur Landesheimrat-Wahl.</p>
+  <h1 style="color: #0369a1;">Anmeldung bestätigt</h1>
+  <p>Hallo <strong>${groupName}</strong>,</p>
 
-  <p style="margin: 30px 0;">
-    <a href="${confirmationLink}" style="background-color: #0369a1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-      Anmeldung bestätigen
-    </a>
-  </p>
+  <div style="background-color: #f0f9ff; border-left: 4px solid #0369a1; padding: 15px; margin: 20px 0;">
+    <p style="margin: 0;">Hiermit bestätigen wir Ihre Anmeldung für Updates zur Landesheimrat-Wahl.</p>
+  </div>
 
-  <p style="font-size: 14px; color: #666;">
-    Falls Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail bitte.
+  <h3 style="color: #0369a1;">Was Sie erwartet:</h3>
+  <ul>
+    <li>Eine <strong>Erinnerung</strong> vor Beginn der Wahl</li>
+    <li><strong>Wichtige Updates</strong> zum Wahlablauf</li>
+    <li><strong>Informationen</strong> zu den Kandidaten</li>
+  </ul>
+
+  <p>Bei Fragen wenden Sie sich bitte an das Hessische Ministerium für Arbeit, Integration, Jugend und Soziales.</p>
+
+  <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+  <p style="font-size: 12px; color: #666;">
+    Diese E-Mail wurde im Auftrag des Hessischen Ministeriums für Arbeit, Integration, Jugend und Soziales versendet.<br>
+    Political XChange i.G. | Eichenweg 2 | 35452 Heuchelheim
   </p>
 </body>
 </html>
@@ -234,6 +250,6 @@ Das Landesheimrat-Wahl Team
 module.exports = {
   sendEmail,
   sendVotingTokenEmail,
-  sendNewsletterConfirmationEmail,
+  sendNewsletterWelcomeEmail,
   sendNewsletterNotification,
 };
