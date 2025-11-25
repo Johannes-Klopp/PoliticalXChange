@@ -140,7 +140,10 @@ async function initializeDatabaseSchema() {
       CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,
-        confirmed BOOLEAN DEFAULT FALSE,
+        group_name VARCHAR(255),
+        facility_name VARCHAR(255),
+        region VARCHAR(255),
+        confirmed BOOLEAN DEFAULT TRUE,
         confirmation_token VARCHAR(512),
         confirmed_at TIMESTAMP NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -148,6 +151,16 @@ async function initializeDatabaseSchema() {
         INDEX idx_confirmed (confirmed)
       ) ENGINE=InnoDB
     `);
+
+    // Add missing columns to existing newsletter_subscriptions table (migration)
+    try {
+      await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN IF NOT EXISTS group_name VARCHAR(255)`);
+      await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN IF NOT EXISTS facility_name VARCHAR(255)`);
+      await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN IF NOT EXISTS region VARCHAR(255)`);
+    } catch (err) {
+      // Columns might already exist, ignore error
+      console.log('   Newsletter columns migration: already exists or error:', err.message);
+    }
 
     // Create audit_log table
     await db.query(`
