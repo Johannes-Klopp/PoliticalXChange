@@ -164,10 +164,10 @@ export default function VotePage() {
           <div className="flex items-center justify-between">
             <span className="text-gray-700 font-medium">Ausgewählte Kandidaten:</span>
             <div className="flex items-center gap-2">
-              <span className={`text-2xl font-bold ${selectedCandidates.length === 3 ? 'text-green-600' : 'text-primary-600'}`}>
+              <span className={`text-2xl font-bold ${selectedCandidates.length === 8 ? 'text-green-600' : 'text-primary-600'}`}>
                 {selectedCandidates.length}
               </span>
-              <span className="text-gray-600">/ 3</span>
+              <span className="text-gray-600">/ 8</span>
             </div>
           </div>
           {selectedCandidates.length > 0 && (
