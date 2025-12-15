@@ -7,7 +7,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const sendVotingStart = async (req, res) => {
   try {
     const { email } = req.body; // Optional: specific email
-    const votingLink = `${FRONTEND_URL}/email-voting`;
+    const votingLink = FRONTEND_URL;
 
     let subscribers;
     if (email) {
@@ -63,7 +63,7 @@ const sendVotingStart = async (req, res) => {
 const sendVotingReminder = async (req, res) => {
   try {
     const { email } = req.body; // Optional: specific email
-    const votingLink = `${FRONTEND_URL}/email-voting`;
+    const votingLink = FRONTEND_URL;
 
     let subscribers;
     if (email) {
