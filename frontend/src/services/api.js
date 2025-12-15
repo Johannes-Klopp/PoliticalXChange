@@ -28,7 +28,9 @@ export const bulkUploadCandidates = (candidates) => api.post('/candidates/bulk',
 
 // Voting
 export const verifyVotingToken = (token) => api.get(`/votes/verify-token?token=${token}`);
-export const submitVote = (token, candidateIds) => api.post('/votes/submit', { token, candidateIds });
+export const verifyEmail = (email) => api.post('/votes/verify-email', { email });
+export const submitVote = (email, candidateIds) => api.post('/votes/submit', { email, candidateIds });
+export const submitVoteWithToken = (token, candidateIds) => api.post('/votes/submit-token', { token, candidateIds });
 export const getResults = () => api.get('/votes/results');
 export const exportResults = () => api.get('/votes/export', { responseType: 'blob' });
 
@@ -51,5 +53,10 @@ export const deleteNewsletterSubscriber = (id) => api.delete(`/newsletter/${id}`
 
 // Audit Log
 export const getAuditLogs = (limit = 100, offset = 0) => api.get(`/audit?limit=${limit}&offset=${offset}`);
+
+// Email Campaign
+export const sendVotingStartEmail = (email = null) => api.post('/campaign/send-voting-start', { email });
+export const sendVotingReminderEmail = (email = null) => api.post('/campaign/send-reminder', { email });
+export const getCampaignStats = () => api.get('/campaign/stats');
 
 export default api;

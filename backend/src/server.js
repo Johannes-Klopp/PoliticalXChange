@@ -14,6 +14,7 @@ const facilitiesRoutes = require('./routes/facilities');
 const newsletterRoutes = require('./routes/newsletter');
 const auditRoutes = require('./routes/audit');
 const emailTestRoutes = require('./routes/emailTest');
+const campaignRoutes = require('./routes/campaign');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,7 @@ app.use('/api/facilities', facilitiesRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/email-test', emailTestRoutes);
+app.use('/api/campaign', campaignRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -114,14 +116,16 @@ async function initializeDatabaseSchema() {
       ) ENGINE=InnoDB
     `);
 
-    // Create votes table
+    // Create votes table with vote_session_id for grouping multiple votes
     await db.query(`
       CREATE TABLE IF NOT EXISTS votes (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        vote_session_id VARCHAR(64) NOT NULL,
         candidate_id INT NOT NULL,
         voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE,
-        INDEX idx_candidate (candidate_id)
+        INDEX idx_candidate (candidate_id),
+        INDEX idx_session (vote_session_id)
       ) ENGINE=InnoDB
     `);
 
@@ -146,9 +150,12 @@ async function initializeDatabaseSchema() {
         confirmed BOOLEAN DEFAULT TRUE,
         confirmation_token VARCHAR(512),
         confirmed_at TIMESTAMP NULL,
+        has_voted BOOLEAN DEFAULT FALSE,
+        voted_at TIMESTAMP NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_email (email),
-        INDEX idx_confirmed (confirmed)
+        INDEX idx_confirmed (confirmed),
+        INDEX idx_has_voted (has_voted)
       ) ENGINE=InnoDB
     `);
 
@@ -161,6 +168,23 @@ async function initializeDatabaseSchema() {
         await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN facility_name VARCHAR(255)`);
         await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN region VARCHAR(255)`);
         console.log('   ✅ Newsletter columns added successfully');
+      }
+
+      // Add has_voted column if not exists
+      const [hasVotedCol] = await db.query(`SHOW COLUMNS FROM newsletter_subscriptions LIKE 'has_voted'`);
+      if (hasVotedCol.length === 0) {
+        await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN has_voted BOOLEAN DEFAULT FALSE`);
+        await db.query(`ALTER TABLE newsletter_subscriptions ADD COLUMN voted_at TIMESTAMP NULL`);
+        await db.query(`ALTER TABLE newsletter_subscriptions ADD INDEX idx_has_voted (has_voted)`);
+        console.log('   ✅ Voting tracking columns added successfully');
+      }
+
+      // Add vote_session_id to votes table if not exists
+      const [voteSessionCol] = await db.query(`SHOW COLUMNS FROM votes LIKE 'vote_session_id'`);
+      if (voteSessionCol.length === 0) {
+        await db.query(`ALTER TABLE votes ADD COLUMN vote_session_id VARCHAR(64) AFTER id`);
+        await db.query(`ALTER TABLE votes ADD INDEX idx_session (vote_session_id)`);
+        console.log('   ✅ Vote session tracking added to votes table');
       }
     } catch (err) {
       console.log('   ⚠️  Newsletter columns migration error:', err.message);

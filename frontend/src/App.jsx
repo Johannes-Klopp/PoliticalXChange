@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import VotingPage from './pages/VotingPage';
+import EmailVotingPage from './pages/EmailVotingPage';
+import VotePage from './pages/VotePage';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import CandidateDetailsPage from './pages/CandidateDetailsPage';
-import NewsletterSubscription from './pages/NewsletterSubscription';
+// import NewsletterSubscription from './pages/NewsletterSubscription'; // Deaktiviert
 
 function App() {
   return (
@@ -13,8 +15,11 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/vote/:token" element={<VotingPage />} />
+          <Route path="/email-voting" element={<EmailVotingPage />} />
+          <Route path="/vote" element={<VotePage />} />
           <Route path="/candidate/:id" element={<CandidateDetailsPage />} />
-          <Route path="/newsletter" element={<NewsletterSubscription />} />
+          {/* Newsletter-Route deaktiviert - Code bleibt erhalten */}
+          {/* <Route path="/newsletter" element={<NewsletterSubscription />} /> */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>
