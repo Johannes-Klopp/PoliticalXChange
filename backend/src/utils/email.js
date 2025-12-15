@@ -266,7 +266,7 @@ ${votingLink}
 Wichtige Hinweise:
 - Pro Wohngruppe können 8 Stimmen abgegeben werden
 - Die Wahl ist anonym
-- Der Link führt Sie direkt zur Wahlseite
+- Melden Sie sich mit der gleichen E-Mail-Adresse an, mit der Sie sich für den Newsletter registriert haben
 
 Bei Fragen wenden Sie sich bitte an das Wahlteam.
 
@@ -301,7 +301,7 @@ Das Landesheimrat-Wahl Team
     <ul style="margin-bottom: 0;">
       <li>Pro Wohngruppe können <strong>8 Stimmen</strong> abgegeben werden</li>
       <li>Die Wahl ist <strong>anonym</strong></li>
-      <li>Geben Sie bei der Wahl Ihre E-Mail-Adresse ein, um sich zu verifizieren</li>
+      <li>Melden Sie sich mit der <strong>gleichen E-Mail-Adresse</strong> an, mit der Sie sich für den Newsletter registriert haben</li>
     </ul>
   </div>
 
@@ -333,7 +333,7 @@ ${votingLink}
 Wichtige Hinweise:
 - Pro Wohngruppe können 8 Stimmen abgegeben werden
 - Die Wahl ist anonym
-- Der Link führt Sie direkt zur Wahlseite
+- Melden Sie sich mit der gleichen E-Mail-Adresse an, mit der Sie sich für den Newsletter registriert haben
 
 Bei Fragen wenden Sie sich bitte an das Wahlteam.
 
@@ -368,7 +368,7 @@ Das Landesheimrat-Wahl Team
     <ul style="margin-bottom: 0;">
       <li>Pro Wohngruppe können <strong>8 Stimmen</strong> abgegeben werden</li>
       <li>Die Wahl ist <strong>anonym</strong></li>
-      <li>Geben Sie bei der Wahl Ihre E-Mail-Adresse ein, um sich zu verifizieren</li>
+      <li>Melden Sie sich mit der <strong>gleichen E-Mail-Adresse</strong> an, mit der Sie sich für den Newsletter registriert haben</li>
     </ul>
   </div>
 
