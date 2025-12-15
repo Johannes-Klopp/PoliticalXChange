@@ -74,7 +74,7 @@ export default function EmailVotingPage() {
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
                   Bitte geben Sie die E-Mail-Adresse ein, mit der sich Ihre Wohngruppe für den Newsletter angemeldet hat.
-                  Jede Wohngruppe kann einmal mit 3 Stimmen wählen.
+                  Jede Wohngruppe kann einmal mit 8 Stimmen wählen.
                 </p>
               </div>
 

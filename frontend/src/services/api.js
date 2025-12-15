@@ -54,4 +54,9 @@ export const deleteNewsletterSubscriber = (id) => api.delete(`/newsletter/${id}`
 // Audit Log
 export const getAuditLogs = (limit = 100, offset = 0) => api.get(`/audit?limit=${limit}&offset=${offset}`);
 
+// Email Campaign
+export const sendVotingStartEmail = (email = null) => api.post('/campaign/send-voting-start', { email });
+export const sendVotingReminderEmail = (email = null) => api.post('/campaign/send-reminder', { email });
+export const getCampaignStats = () => api.get('/campaign/stats');
+
 export default api;

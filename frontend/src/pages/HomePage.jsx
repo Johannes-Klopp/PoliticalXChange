@@ -64,7 +64,7 @@ export default function HomePage() {
                 Informationen zur Wahl
               </h2>
               <p className="text-gray-600 mb-4 leading-relaxed">
-                Willkommen zur Wahl des Landesheimrats. Jede Wohngruppe kann mit 3 Stimmen abstimmen.
+                Willkommen zur Wahl des Landesheimrats. Jede Wohngruppe kann mit 8 Stimmen abstimmen.
                 Die Wahl erfolgt über die E-Mail-Adresse, mit der Sie sich für den Newsletter angemeldet haben.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-start">

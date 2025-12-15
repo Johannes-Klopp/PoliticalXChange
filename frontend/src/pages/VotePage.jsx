@@ -42,9 +42,9 @@ export default function VotePage() {
         return prev.filter(id => id !== candidateId);
       }
 
-      // Max 3 candidates
-      if (prev.length >= 3) {
-        setError('Sie können maximal 3 Kandidaten auswählen');
+      // Max 8 candidates
+      if (prev.length >= 8) {
+        setError('Sie können maximal 8 Kandidaten auswählen');
         setTimeout(() => setError(null), 3000);
         return prev;
       }
@@ -61,8 +61,8 @@ export default function VotePage() {
       return;
     }
 
-    if (selectedCandidates.length > 3) {
-      setError('Sie können maximal 3 Kandidaten wählen');
+    if (selectedCandidates.length > 8) {
+      setError('Sie können maximal 8 Kandidaten wählen');
       return;
     }
 

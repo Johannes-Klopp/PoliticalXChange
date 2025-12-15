@@ -14,6 +14,7 @@ const facilitiesRoutes = require('./routes/facilities');
 const newsletterRoutes = require('./routes/newsletter');
 const auditRoutes = require('./routes/audit');
 const emailTestRoutes = require('./routes/emailTest');
+const campaignRoutes = require('./routes/campaign');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,7 @@ app.use('/api/facilities', facilitiesRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/email-test', emailTestRoutes);
+app.use('/api/campaign', campaignRoutes);
 
 // 404 handler
 app.use((req, res) => {

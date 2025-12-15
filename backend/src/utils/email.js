@@ -252,9 +252,145 @@ Das Landesheimrat-Wahl Team
   return sendEmail({ to: email, subject, text, html });
 };
 
+// Send voting start notification
+const sendVotingStartEmail = async (email, groupName, votingLink) => {
+  const subject = 'Die Landesheimrat-Wahl hat begonnen - Jetzt abstimmen!';
+  const text = `
+Hallo ${groupName},
+
+die Wahl zum Landesheimrat hat begonnen! Sie können jetzt Ihre Stimme abgeben.
+
+Klicken Sie hier, um zur Wahl zu gelangen:
+${votingLink}
+
+Wichtige Hinweise:
+- Pro Wohngruppe können 8 Stimmen abgegeben werden
+- Die Wahl ist anonym
+- Der Link führt Sie direkt zur Wahlseite
+
+Bei Fragen wenden Sie sich bitte an das Wahlteam.
+
+Mit freundlichen Grüßen
+Das Landesheimrat-Wahl Team
+  `;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Die Wahl hat begonnen!</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">Die Wahl hat begonnen!</h1>
+  </div>
+
+  <p>Hallo <strong>${groupName}</strong>,</p>
+  <p>die Wahl zum Landesheimrat hat begonnen! Sie können jetzt Ihre Stimme abgeben.</p>
+
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="${votingLink}" style="background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block;">
+      Jetzt abstimmen
+    </a>
+  </div>
+
+  <div style="background-color: #f0f9ff; border-left: 4px solid #0369a1; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #0369a1; margin-top: 0;">Wichtige Hinweise:</h3>
+    <ul style="margin-bottom: 0;">
+      <li>Pro Wohngruppe können <strong>8 Stimmen</strong> abgegeben werden</li>
+      <li>Die Wahl ist <strong>anonym</strong></li>
+      <li>Geben Sie bei der Wahl Ihre E-Mail-Adresse ein, um sich zu verifizieren</li>
+    </ul>
+  </div>
+
+  <p>Bei Fragen wenden Sie sich bitte an das Wahlteam.</p>
+
+  <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+  <p style="font-size: 12px; color: #666;">
+    Diese E-Mail wurde im Auftrag des Landesheimrats versendet.<br>
+    Political XChange i.G. | Eichenweg 2 | 35452 Heuchelheim
+  </p>
+</body>
+</html>
+  `;
+
+  return sendEmail({ to: email, subject, text, html });
+};
+
+// Send voting reminder email
+const sendVotingReminderEmail = async (email, groupName, votingLink) => {
+  const subject = 'Erinnerung: Noch nicht abgestimmt - Landesheimrat-Wahl';
+  const text = `
+Hallo ${groupName},
+
+Sie haben noch nicht an der Landesheimrat-Wahl teilgenommen. Die Wahl läuft noch - nutzen Sie Ihre Chance!
+
+Klicken Sie hier, um zur Wahl zu gelangen:
+${votingLink}
+
+Wichtige Hinweise:
+- Pro Wohngruppe können 8 Stimmen abgegeben werden
+- Die Wahl ist anonym
+- Der Link führt Sie direkt zur Wahlseite
+
+Bei Fragen wenden Sie sich bitte an das Wahlteam.
+
+Mit freundlichen Grüßen
+Das Landesheimrat-Wahl Team
+  `;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Erinnerung: Wahl</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">Erinnerung: Noch nicht abgestimmt!</h1>
+  </div>
+
+  <p>Hallo <strong>${groupName}</strong>,</p>
+  <p>Sie haben noch nicht an der Landesheimrat-Wahl teilgenommen. Die Wahl läuft noch - <strong>nutzen Sie Ihre Chance!</strong></p>
+
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="${votingLink}" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block;">
+      Jetzt abstimmen
+    </a>
+  </div>
+
+  <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+    <h3 style="color: #d97706; margin-top: 0;">Wichtige Hinweise:</h3>
+    <ul style="margin-bottom: 0;">
+      <li>Pro Wohngruppe können <strong>8 Stimmen</strong> abgegeben werden</li>
+      <li>Die Wahl ist <strong>anonym</strong></li>
+      <li>Geben Sie bei der Wahl Ihre E-Mail-Adresse ein, um sich zu verifizieren</li>
+    </ul>
+  </div>
+
+  <p>Bei Fragen wenden Sie sich bitte an das Wahlteam.</p>
+
+  <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+  <p style="font-size: 12px; color: #666;">
+    Diese E-Mail wurde im Auftrag des Landesheimrats versendet.<br>
+    Political XChange i.G. | Eichenweg 2 | 35452 Heuchelheim
+  </p>
+</body>
+</html>
+  `;
+
+  return sendEmail({ to: email, subject, text, html });
+};
+
 module.exports = {
   sendEmail,
   sendVotingTokenEmail,
   sendNewsletterWelcomeEmail,
   sendNewsletterNotification,
+  sendVotingStartEmail,
+  sendVotingReminderEmail,
 };

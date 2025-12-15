@@ -97,7 +97,7 @@ export default function StatisticsDashboard() {
             </svg>
           </div>
           <p className="text-orange-100 text-xs mt-3">
-            Jede Gruppe kann 3 Stimmen abgeben
+            Jede Gruppe kann 8 Stimmen abgeben
           </p>
         </div>
       </div>
