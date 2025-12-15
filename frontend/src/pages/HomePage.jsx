@@ -72,7 +72,7 @@ export default function HomePage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
-                  <span>22. November – 30. November 2025</span>
+                  <span>17. Dezember – 31. Dezember 2025 | Ergebnisse: 08. Januar 2026</span>
                 </div>
                 <Link
                   to="/email-voting"
@@ -176,31 +176,7 @@ export default function HomePage() {
         </section>
 
 
-        {/* Footer Links */}
-        <footer className="mt-16 text-center space-y-4">
-          <Link
-            to="/newsletter"
-            className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-800 font-medium transition-colors duration-200 group"
-          >
-            <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
-            <span className="border-b-2 border-transparent group-hover:border-primary-600 transition-all duration-200">Newsletter-Anmeldung</span>
-          </Link>
-
-          <div>
-            <Link
-              to="/admin/login"
-              className="inline-flex items-center gap-2 text-gray-500 hover:text-primary-700 font-medium transition-colors duration-200 group text-sm"
-            >
-              <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-              <span className="border-b-2 border-transparent group-hover:border-primary-600 transition-all duration-200">Admin-Bereich</span>
-            </Link>
-          </div>
-        </footer>
+{/* Admin-Link entfernt - Zugang über /admin/login */}
       </main>
     </div>
   );
