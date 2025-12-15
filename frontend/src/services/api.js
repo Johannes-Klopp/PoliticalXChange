@@ -47,6 +47,7 @@ export const resendToken = (facilityId) => api.post(`/facilities/${facilityId}/r
 
 // Newsletter
 export const subscribeNewsletter = (data) => api.post('/newsletter/subscribe', data);
+export const adminAddSubscriber = (data) => api.post('/newsletter/admin-add', data);
 export const unsubscribeNewsletter = (email) => api.post('/newsletter/unsubscribe', { email });
 export const getNewsletterSubscribers = () => api.get('/newsletter');
 export const deleteNewsletterSubscriber = (id) => api.delete(`/newsletter/${id}`);

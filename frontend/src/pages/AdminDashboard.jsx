@@ -10,7 +10,7 @@ import {
   bulkUploadCandidates,
   getAuditLogs,
   getNewsletterSubscribers,
-  subscribeNewsletter,
+  adminAddSubscriber,
   deleteNewsletterSubscriber,
   sendVotingStartEmail,
   sendVotingReminderEmail,
@@ -682,7 +682,7 @@ export default function AdminDashboard() {
                       setError('');
                       setSuccess('');
                       try {
-                        await subscribeNewsletter(newNewsletterSub);
+                        await adminAddSubscriber(newNewsletterSub);
                         setSuccess('Wohngruppe erfolgreich registriert');
                         setNewNewsletterSub({ email: '', groupName: '', facilityName: '', region: '' });
                         const response = await getNewsletterSubscribers();

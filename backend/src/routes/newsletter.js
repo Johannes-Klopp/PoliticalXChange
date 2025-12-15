@@ -9,6 +9,7 @@ router.post('/unsubscribe', newsletterController.unsubscribe);
 
 // Admin routes
 router.get('/', verifyToken, verifyAdmin, newsletterController.getSubscribers);
+router.post('/admin-add', verifyToken, verifyAdmin, newsletterController.adminAddSubscriber);
 router.delete('/:id', verifyToken, verifyAdmin, newsletterController.deleteSubscriber);
 
 module.exports = router;

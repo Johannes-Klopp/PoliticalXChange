@@ -101,3 +101,44 @@ exports.deleteSubscriber = async (req, res) => {
     res.status(500).json({ error: 'Fehler beim Löschen' });
   }
 };
+
+// Admin add subscriber (no password required)
+exports.adminAddSubscriber = async (req, res) => {
+  try {
+    const { email, groupName, facilityName, region } = req.body;
+
+    // Validation
+    if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return res.status(400).json({ error: 'Gültige E-Mail-Adresse erforderlich' });
+    }
+
+    if (!groupName || groupName.trim().length === 0) {
+      return res.status(400).json({ error: 'Wohngruppenname erforderlich' });
+    }
+
+    if (!facilityName || facilityName.trim().length === 0) {
+      return res.status(400).json({ error: 'Einrichtungsname erforderlich' });
+    }
+
+    // Check if already subscribed
+    const [existing] = await db.query(
+      'SELECT * FROM newsletter_subscriptions WHERE email = ?',
+      [email]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ error: 'Diese E-Mail-Adresse ist bereits registriert' });
+    }
+
+    // Create subscription - automatically confirmed
+    await db.query(
+      'INSERT INTO newsletter_subscriptions (email, group_name, facility_name, region, confirmed, confirmed_at) VALUES (?, ?, ?, ?, TRUE, NOW())',
+      [email, groupName.trim(), facilityName.trim(), region?.trim() || null]
+    );
+
+    res.json({ message: 'Wohngruppe erfolgreich registriert' });
+  } catch (error) {
+    console.error('Admin add subscriber error:', error);
+    res.status(500).json({ error: 'Fehler beim Registrieren' });
+  }
+};
