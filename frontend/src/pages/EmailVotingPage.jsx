@@ -183,7 +183,7 @@ export default function EmailVotingPage() {
               <h3 className="font-semibold mb-2">Wichtige Informationen zur Wahl</h3>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Jede Wohngruppe kann einmal abstimmen</li>
-                <li>Sie können bis zu 3 Kandidaten wählen</li>
+                <li>Sie können bis zu 8 Kandidaten wählen</li>
                 <li>Die Stimmabgabe ist anonym und geheim</li>
                 <li>Nach der Stimmabgabe kann diese nicht mehr geändert werden</li>
               </ul>

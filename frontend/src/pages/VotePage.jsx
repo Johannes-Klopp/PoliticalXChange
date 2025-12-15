@@ -148,7 +148,7 @@ export default function VotePage() {
             Ihre Stimmen abgeben
           </h1>
           <p className="text-primary-100 text-lg font-light mb-2">
-            Wählen Sie bis zu 3 Kandidaten aus
+            Wählen Sie bis zu 8 Kandidaten aus
           </p>
           <p className="text-primary-200 text-sm">
             Wohngruppe: <strong>{votingGroupName}</strong>
@@ -322,7 +322,7 @@ export default function VotePage() {
             <div className="text-blue-800">
               <h3 className="font-semibold mb-2">Hinweise zur Stimmabgabe</h3>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Sie können 1 bis 3 Kandidaten auswählen</li>
+                <li>Sie können 1 bis 8 Kandidaten auswählen</li>
                 <li>Klicken Sie auf die Checkboxen, um Kandidaten auszuwählen</li>
                 <li>Ihre Auswahl wird oben im Zähler angezeigt</li>
                 <li>Nach dem Absenden kann Ihre Wahl nicht mehr geändert werden</li>
