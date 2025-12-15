@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import StatisticsDashboard from '../components/StatisticsDashboard';
 import {
   getCandidates,
   createCandidate,
   deleteCandidate,
   getResults,
   exportResults,
-  getFacilities,
-  addFacility,
   bulkUploadCandidates,
   getAuditLogs,
   getNewsletterSubscribers,
@@ -17,9 +16,8 @@ import {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('candidates');
+  const [activeTab, setActiveTab] = useState('statistics');
   const [candidates, setCandidates] = useState([]);
-  const [facilities, setFacilities] = useState([]);
   const [results, setResults] = useState({ results: [], totalVotes: 0 });
   const [auditLogs, setAuditLogs] = useState([]);
   const [newsletterSubscribers, setNewsletterSubscribers] = useState([]);
@@ -31,9 +29,6 @@ export default function AdminDashboard() {
     name: '', age: '', facility_name: '', facility_location: '', biography: '',
   });
 
-  const [newFacility, setNewFacility] = useState({
-    name: '', email: '', location: '',
-  });
 
   const [newNewsletterSub, setNewNewsletterSub] = useState({
     email: '', groupName: '', facilityName: '', region: '',
@@ -56,9 +51,6 @@ export default function AdminDashboard() {
       if (activeTab === 'candidates') {
         const response = await getCandidates();
         setCandidates(response.data.candidates);
-      } else if (activeTab === 'facilities') {
-        const response = await getFacilities();
-        setFacilities(response.data.facilities);
       } else if (activeTab === 'results') {
         const response = await getResults();
         setResults(response.data);
@@ -106,19 +98,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleAddFacility = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    try {
-      await addFacility(newFacility);
-      setSuccess('Einrichtung hinzugefügt und Token versendet');
-      setNewFacility({ name: '', email: '', location: '' });
-      loadData();
-    } catch (err) {
-      setError(err.response?.data?.error || 'Fehler beim Hinzufügen');
-    }
-  };
 
   const handleBulkUpload = async (e) => {
     e.preventDefault();
@@ -145,19 +124,21 @@ export default function AdminDashboard() {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'wahlergebnisse.csv');
+      const today = new Date().toISOString().split('T')[0];
+      link.setAttribute('download', `Wahlergebnisse_${today}.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
+      setSuccess('Excel-Datei wurde erfolgreich heruntergeladen');
     } catch (err) {
-      setError('Fehler beim Exportieren');
+      setError('Fehler beim Exportieren der Excel-Datei');
     }
   };
 
   const tabs = [
+    { id: 'statistics', label: 'Statistiken', icon: 'M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z' },
     { id: 'candidates', label: 'Kandidaten', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
     { id: 'bulk', label: 'Bulk Upload', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12' },
-    { id: 'facilities', label: 'Einrichtungen', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
     { id: 'results', label: 'Ergebnisse', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
     { id: 'newsletter', label: 'Newsletter', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
     { id: 'audit', label: 'Audit Log', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
@@ -257,6 +238,13 @@ export default function AdminDashboard() {
           </div>
         ) : (
           <>
+            {/* Statistics Tab */}
+            {activeTab === 'statistics' && (
+              <div className="animate-fade-in">
+                <StatisticsDashboard />
+              </div>
+            )}
+
             {/* Candidates Tab */}
             {activeTab === 'candidates' && (
               <div className="space-y-8">
@@ -358,102 +346,31 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* Facilities Tab */}
-            {activeTab === 'facilities' && (
-              <div className="space-y-8">
-                <section className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                  <h2 className="text-2xl font-bold mb-6 text-gray-900 flex items-center gap-3">
-                    <div className="w-1 h-8 bg-gradient-to-b from-primary-500 to-primary-700 rounded-full"></div>
-                    Neue Einrichtung hinzufügen
-                  </h2>
-                  <form onSubmit={handleAddFacility} className="space-y-5">
-                    <div className="grid grid-cols-3 gap-5">
-                      <input
-                        type="text"
-                        placeholder="Name *"
-                        value={newFacility.name}
-                        onChange={(e) => setNewFacility({ ...newFacility, name: e.target.value })}
-                        className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                        required
-                      />
-                      <input
-                        type="email"
-                        placeholder="E-Mail *"
-                        value={newFacility.email}
-                        onChange={(e) => setNewFacility({ ...newFacility, email: e.target.value })}
-                        className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                        required
-                      />
-                      <input
-                        type="text"
-                        placeholder="Standort *"
-                        value={newFacility.location}
-                        onChange={(e) => setNewFacility({ ...newFacility, location: e.target.value })}
-                        className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                        required
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="inline-flex items-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-md hover:shadow-xl"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                      </svg>
-                      <span>Einrichtung hinzufügen & Token senden</span>
-                    </button>
-                  </form>
-                </section>
-
-                <section className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                  <div className="px-8 py-6 border-b border-gray-200 bg-gray-50">
-                    <h2 className="text-xl font-bold text-gray-900">Alle Einrichtungen ({facilities.length})</h2>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">E-Mail</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Standort</th>
-                          <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Token gesendet</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {facilities.map((facility) => (
-                          <tr key={facility.id} className="hover:bg-gray-50 transition-colors">
-                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{facility.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-gray-600">{facility.email}</td>
-                            <td className="px-6 py-4 text-gray-600">{facility.location}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              {facility.token_sent ? (
-                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                                  </svg>
-                                  Ja
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">
-                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
-                                  </svg>
-                                  Nein
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-              </div>
-            )}
 
             {/* Results Tab */}
             {activeTab === 'results' && (
               <div className="space-y-8">
+                {/* Gewinner-Anzeige */}
+                {results.results && results.results.length > 0 && results.results[0].vote_count > 0 && (
+                  <div className="bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl shadow-2xl p-8 text-white">
+                    <div className="flex items-center justify-center mb-4">
+                      <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-center text-3xl font-extrabold mb-2">GEWINNER</h2>
+                    <div className="text-center">
+                      <p className="text-4xl font-bold mb-2">{results.results[0].name}</p>
+                      <p className="text-xl opacity-90">{results.results[0].facility_name}</p>
+                      <p className="text-lg opacity-80">{results.results[0].facility_location}</p>
+                      <div className="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur px-6 py-3 rounded-full">
+                        <span className="text-2xl font-bold">{results.results[0].vote_count}</span>
+                        <span className="text-lg">{results.results[0].vote_count === 1 ? 'Stimme' : 'Stimmen'}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between">
                   <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex-1 mr-4">
                     <div className="flex items-center gap-4">
@@ -464,7 +381,7 @@ export default function AdminDashboard() {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600 font-medium">Gesamtstimmen</p>
-                        <p className="text-4xl font-extrabold text-gray-900">{results.totalVotes}</p>
+                        <p className="text-4xl font-extrabold text-gray-900">{results.totalVotes || 0}</p>
                       </div>
                     </div>
                   </div>
@@ -475,19 +392,19 @@ export default function AdminDashboard() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    <span>Als CSV exportieren</span>
+                    <span>Als Excel exportieren</span>
                   </button>
                 </div>
 
                 <section className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                   <div className="px-8 py-6 border-b border-gray-200 bg-gray-50">
-                    <h2 className="text-xl font-bold text-gray-900">Wahlergebnisse</h2>
+                    <h2 className="text-xl font-bold text-gray-900">Vollständige Wahlergebnisse</h2>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Rang</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Platz</th>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Einrichtung</th>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Standort</th>
@@ -495,23 +412,35 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {results.results.map((result, index) => (
-                          <tr key={result.id} className="hover:bg-gray-50 transition-colors">
+                        {results.results && results.results.map((result, index) => (
+                          <tr key={result.id} className={`transition-colors ${
+                            index === 0 ? 'bg-yellow-50 hover:bg-yellow-100' :
+                            index === 1 ? 'bg-gray-50 hover:bg-gray-100' :
+                            index === 2 ? 'bg-orange-50 hover:bg-orange-100' :
+                            'hover:bg-gray-50'
+                          }`}>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold ${
-                                index === 0 ? 'bg-yellow-100 text-yellow-800' :
-                                index === 1 ? 'bg-gray-100 text-gray-800' :
-                                index === 2 ? 'bg-orange-100 text-orange-800' :
-                                'bg-gray-50 text-gray-600'
+                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm ${
+                                index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-white shadow-lg' :
+                                index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white shadow-md' :
+                                index === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-md' :
+                                'bg-gray-100 text-gray-600'
                               }`}>
-                                {index + 1}
+                                {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{result.name}</td>
+                            <td className={`px-6 py-4 whitespace-nowrap font-medium ${
+                              index === 0 ? 'text-yellow-900 text-lg' : 'text-gray-900'
+                            }`}>{result.name}</td>
                             <td className="px-6 py-4 text-gray-900">{result.facility_name}</td>
                             <td className="px-6 py-4 text-gray-600">{result.facility_location}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <span className="inline-flex items-center px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-bold">
+                              <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${
+                                index === 0 ? 'bg-yellow-200 text-yellow-900' :
+                                index === 1 ? 'bg-gray-200 text-gray-900' :
+                                index === 2 ? 'bg-orange-200 text-orange-900' :
+                                'bg-primary-100 text-primary-800'
+                              }`}>
                                 {result.vote_count}
                               </span>
                             </td>
@@ -519,6 +448,11 @@ export default function AdminDashboard() {
                         ))}
                       </tbody>
                     </table>
+                    {(!results.results || results.results.length === 0) && (
+                      <div className="text-center py-12 text-gray-500">
+                        Noch keine Wahlergebnisse vorhanden
+                      </div>
+                    )}
                   </div>
                 </section>
               </div>

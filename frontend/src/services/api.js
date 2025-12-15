@@ -28,7 +28,9 @@ export const bulkUploadCandidates = (candidates) => api.post('/candidates/bulk',
 
 // Voting
 export const verifyVotingToken = (token) => api.get(`/votes/verify-token?token=${token}`);
-export const submitVote = (token, candidateIds) => api.post('/votes/submit', { token, candidateIds });
+export const verifyEmail = (email) => api.post('/votes/verify-email', { email });
+export const submitVote = (email, candidateIds) => api.post('/votes/submit', { email, candidateIds });
+export const submitVoteWithToken = (token, candidateIds) => api.post('/votes/submit-token', { token, candidateIds });
 export const getResults = () => api.get('/votes/results');
 export const exportResults = () => api.get('/votes/export', { responseType: 'blob' });
 
