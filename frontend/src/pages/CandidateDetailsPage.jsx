@@ -87,33 +87,38 @@ export default function CandidateDetailsPage() {
           {/* Facility Card */}
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
             <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h2 className="text-sm font-semibold text-gray-500 mb-1">Einrichtung</h2>
-                <p className="text-lg font-bold text-gray-900">{candidate.facility_name}</p>
-              </div>
+              {candidate.youth_care_experience && (
+              <>
+                <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-sm font-semibold text-gray-500 mb-1">Jugendhilfeerfahrung</h2>
+                  <p className="text-lg font-bold text-gray-900">{candidate.youth_care_experience}</p>
+                </div>
+              </>
+            )}
             </div>
           </div>
 
-          {/* Location Card */}
-          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h2 className="text-sm font-semibold text-gray-500 mb-1">Standort</h2>
-                <p className="text-lg font-bold text-gray-900">{candidate.facility_location}</p>
+          {/* Fun Fact Card */}
+          {candidate.fun_fact && (
+            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-sm font-semibold text-gray-500 mb-1">Fun Fact über mich</h2>
+                  <p className="text-lg font-bold text-gray-900">{candidate.fun_fact}</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Biography Section */}

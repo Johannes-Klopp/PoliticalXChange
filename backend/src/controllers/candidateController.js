@@ -4,7 +4,7 @@ const db = require('../config/database');
 const getAllCandidates = async (req, res) => {
   try {
     const [candidates] = await db.query(
-      'SELECT id, name, age, facility_name, facility_location, biography FROM candidates ORDER BY name ASC'
+      'SELECT id, name, age, youth_care_experience, fun_fact, biography FROM candidates ORDER BY name ASC'
     );
 
     res.json({ candidates });
@@ -20,7 +20,7 @@ const getCandidateById = async (req, res) => {
     const { id } = req.params;
 
     const [candidates] = await db.query(
-      'SELECT id, name, age, facility_name, facility_location, biography FROM candidates WHERE id = ?',
+      'SELECT id, name, age, youth_care_experience, fun_fact, biography FROM candidates WHERE id = ?',
       [id]
     );
 
@@ -38,12 +38,12 @@ const getCandidateById = async (req, res) => {
 // Create candidate (Admin only)
 const createCandidate = async (req, res) => {
   try {
-    const { name, age, facility_name, facility_location, biography } = req.body;
+    const { name, age, youth_care_experience, fun_fact, biography } = req.body;
 
     // Validation
-    if (!name || !facility_name || !facility_location) {
+    if (!name) {
       return res.status(400).json({
-        error: 'Name, Einrichtungsname und Standort sind erforderlich'
+        error: 'Name ist erforderlich'
       });
     }
 
@@ -54,8 +54,8 @@ const createCandidate = async (req, res) => {
     }
 
     const [result] = await db.query(
-      'INSERT INTO candidates (name, age, facility_name, facility_location, biography) VALUES (?, ?, ?, ?, ?)',
-      [name, age || null, facility_name, facility_location, biography || null]
+      'INSERT INTO candidates (name, age, youth_care_experience, fun_fact, biography) VALUES (?, ?, ?, ?, ?)',
+      [name, age || null, youth_care_experience || null, fun_fact || null, biography || null]
     );
 
     res.status(201).json({
@@ -72,7 +72,7 @@ const createCandidate = async (req, res) => {
 const updateCandidate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, age, facility_name, facility_location, biography } = req.body;
+    const { name, age, youth_care_experience, fun_fact, biography } = req.body;
 
     if (biography && biography.length > 2000) {
       return res.status(400).json({
@@ -81,8 +81,8 @@ const updateCandidate = async (req, res) => {
     }
 
     const [result] = await db.query(
-      'UPDATE candidates SET name = ?, age = ?, facility_name = ?, facility_location = ?, biography = ? WHERE id = ?',
-      [name, age || null, facility_name, facility_location, biography || null, id]
+      'UPDATE candidates SET name = ?, age = ?, youth_care_experience = ?, fun_fact = ?, biography = ? WHERE id = ?',
+      [name, age || null, youth_care_experience || null, fun_fact || null, biography || null, id]
     );
 
     if (result.affectedRows === 0) {
@@ -126,13 +126,13 @@ const bulkUploadCandidates = async (req, res) => {
     const values = candidates.map(c => [
       c.name,
       c.age || null,
-      c.facility_name,
-      c.facility_location,
+      c.youth_care_experience || null,
+      c.fun_fact || null,
       c.biography || null
     ]);
 
     const [result] = await db.query(
-      'INSERT INTO candidates (name, age, facility_name, facility_location, biography) VALUES ?',
+      'INSERT INTO candidates (name, age, youth_care_experience, fun_fact, biography) VALUES ?',
       [values]
     );
 

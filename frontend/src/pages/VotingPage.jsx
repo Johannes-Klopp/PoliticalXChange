@@ -199,12 +199,14 @@ export default function VotingPage() {
                           <span className="text-sm font-medium">{candidate.age} Jahre</span>
                         </div>
                       )}
-                      <div className="flex items-start gap-2 text-gray-700">
-                        <svg className="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                        <span className="text-sm font-medium">{candidate.facility_name}, {candidate.facility_location}</span>
-                      </div>
+                      {candidate.youth_care_experience && (
+                        <div className="flex items-start gap-2 text-gray-700">
+                          <svg className="w-4 h-4 text-primary-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                          <span className="text-sm font-medium">{candidate.youth_care_experience}</span>
+                        </div>
+                      )}
                     </div>
                     {candidate.biography && (
                       <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">

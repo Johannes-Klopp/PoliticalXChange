@@ -268,8 +268,8 @@ const getResults = async (req, res) => {
       SELECT
         c.id,
         c.name,
-        c.facility_name,
-        c.facility_location,
+        c.youth_care_experience,
+        c.fun_fact,
         COUNT(v.id) as vote_count
       FROM candidates c
       LEFT JOIN votes v ON c.id = v.candidate_id
@@ -387,8 +387,8 @@ const exportResults = async (req, res) => {
         ROW_NUMBER() OVER (ORDER BY COUNT(v.id) DESC, c.name ASC) as 'Platz',
         c.name as 'Name',
         c.age as 'Alter',
-        c.facility_name as 'Einrichtung',
-        c.facility_location as 'Standort',
+        c.youth_care_experience as 'Jugendhilfeerfahrung',
+        c.fun_fact as 'Fun Fact',
         COUNT(v.id) as 'Stimmen'
       FROM candidates c
       LEFT JOIN votes v ON c.id = v.candidate_id

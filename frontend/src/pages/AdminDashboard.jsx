@@ -29,7 +29,7 @@ export default function AdminDashboard() {
   const [success, setSuccess] = useState('');
 
   const [newCandidate, setNewCandidate] = useState({
-    name: '', age: '', facility_name: '', facility_location: '', biography: '',
+    name: '', age: '', youth_care_experience: '', fun_fact: '', biography: '',
   });
 
 
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
     try {
       await createCandidate(newCandidate);
       setSuccess('Kandidat erfolgreich hinzugefügt');
-      setNewCandidate({ name: '', age: '', facility_name: '', facility_location: '', biography: '' });
+      setNewCandidate({ name: '', age: '', youth_care_experience: '', fun_fact: '', biography: '' });
       loadData();
     } catch (err) {
       setError(err.response?.data?.error || 'Fehler beim Hinzufügen');
@@ -119,8 +119,8 @@ export default function AdminDashboard() {
     try {
       const lines = bulkCandidates.trim().split('\n');
       const candidatesArray = lines.map(line => {
-        const [name, age, facility_name, facility_location, biography] = line.split(',').map(s => s.trim());
-        return { name, age: age || null, facility_name, facility_location, biography: biography || '' };
+        const [name, age, youth_care_experience, fun_fact, biography] = line.split(',').map(s => s.trim());
+        return { name, age: age || null, youth_care_experience, fun_fact, biography: biography || '' };
       });
       await bulkUploadCandidates(candidatesArray);
       setSuccess(`${candidatesArray.length} Kandidaten erfolgreich hochgeladen`);
@@ -286,19 +286,17 @@ export default function AdminDashboard() {
                       />
                       <input
                         type="text"
-                        placeholder="Einrichtung *"
-                        value={newCandidate.facility_name}
-                        onChange={(e) => setNewCandidate({ ...newCandidate, facility_name: e.target.value })}
+                        placeholder="Jugendhilfeerfahrung"
+                        value={newCandidate.youth_care_experience}
+                        onChange={(e) => setNewCandidate({ ...newCandidate, youth_care_experience: e.target.value })}
                         className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                        required
                       />
                       <input
                         type="text"
-                        placeholder="Standort *"
-                        value={newCandidate.facility_location}
-                        onChange={(e) => setNewCandidate({ ...newCandidate, facility_location: e.target.value })}
+                        placeholder="Fun Fact über mich"
+                        value={newCandidate.fun_fact}
+                        onChange={(e) => setNewCandidate({ ...newCandidate, fun_fact: e.target.value })}
                         className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                        required
                       />
                     </div>
                     <textarea
@@ -331,8 +329,8 @@ export default function AdminDashboard() {
                         <tr>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Alter</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Einrichtung</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Standort</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Jugendhilfeerfahrung</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fun Fact</th>
                           <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Aktionen</th>
                         </tr>
                       </thead>
@@ -341,8 +339,8 @@ export default function AdminDashboard() {
                           <tr key={candidate.id} className="hover:bg-gray-50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{candidate.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-gray-600">{candidate.age || '-'}</td>
-                            <td className="px-6 py-4 text-gray-900">{candidate.facility_name}</td>
-                            <td className="px-6 py-4 text-gray-600">{candidate.facility_location}</td>
+                            <td className="px-6 py-4 text-gray-900">{candidate.youth_care_experience || '-'}</td>
+                            <td className="px-6 py-4 text-gray-600">{candidate.fun_fact || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
                               <button
                                 onClick={() => handleDeleteCandidate(candidate.id)}
@@ -375,8 +373,8 @@ export default function AdminDashboard() {
                     <h2 className="text-center text-3xl font-extrabold mb-2">GEWINNER</h2>
                     <div className="text-center">
                       <p className="text-4xl font-bold mb-2">{results.results[0].name}</p>
-                      <p className="text-xl opacity-90">{results.results[0].facility_name}</p>
-                      <p className="text-lg opacity-80">{results.results[0].facility_location}</p>
+                      <p className="text-xl opacity-90">{results.results[0].youth_care_experience}</p>
+                      <p className="text-lg opacity-80">{results.results[0].fun_fact}</p>
                       <div className="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur px-6 py-3 rounded-full">
                         <span className="text-2xl font-bold">{results.results[0].vote_count}</span>
                         <span className="text-lg">{results.results[0].vote_count === 1 ? 'Stimme' : 'Stimmen'}</span>
@@ -420,8 +418,8 @@ export default function AdminDashboard() {
                         <tr>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Platz</th>
                           <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Einrichtung</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Standort</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Jugendhilfeerfahrung</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fun Fact</th>
                           <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Stimmen</th>
                         </tr>
                       </thead>
@@ -446,8 +444,8 @@ export default function AdminDashboard() {
                             <td className={`px-6 py-4 whitespace-nowrap font-medium ${
                               index === 0 ? 'text-yellow-900 text-lg' : 'text-gray-900'
                             }`}>{result.name}</td>
-                            <td className="px-6 py-4 text-gray-900">{result.facility_name}</td>
-                            <td className="px-6 py-4 text-gray-600">{result.facility_location}</td>
+                            <td className="px-6 py-4 text-gray-900">{result.youth_care_experience || '-'}</td>
+                            <td className="px-6 py-4 text-gray-600">{result.fun_fact || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
                               <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold ${
                                 index === 0 ? 'bg-yellow-200 text-yellow-900' :
@@ -482,13 +480,13 @@ export default function AdminDashboard() {
                 <form onSubmit={handleBulkUpload} className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Kandidaten (CSV-Format: Name, Alter, Einrichtung, Standort, Biografie)
+                      Kandidaten (CSV-Format: Name, Alter, Jugendhilfeerfahrung, Fun Fact, Biografie)
                     </label>
                     <textarea
                       value={bulkCandidates}
                       onChange={(e) => setBulkCandidates(e.target.value)}
                       rows="10"
-                      placeholder="Max Mustermann, 25, Kinder- und Jugendheim Frankfurt, Frankfurt, Biografie...&#10;Anna Schmidt, 23, Jugendhilfe Kassel, Kassel, Biografie..."
+                      placeholder="Max Mustermann, 25, 5 Jahre in der Jugendhilfe, Spielt gerne Gitarre, Biografie...&#10;Anna Schmidt, 23, 3 Jahre Erfahrung, Liebt Wandern, Biografie..."
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-mono text-sm"
                       required
                     />

@@ -77,13 +77,32 @@ async function initializeDatabaseSchema() {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         age INT,
-        facility_name VARCHAR(255) NOT NULL,
-        facility_location VARCHAR(255) NOT NULL,
+        youth_care_experience TEXT,
+        fun_fact TEXT,
         biography TEXT(2000),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        INDEX idx_facility (facility_name)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB
     `);
+
+    // Migration: Rename old columns if they exist
+    try {
+      const [columns] = await db.query(`SHOW COLUMNS FROM candidates LIKE 'facility_name'`);
+      if (columns.length > 0) {
+        // First drop the index (ignore if doesn't exist)
+        try {
+          await db.query(`ALTER TABLE candidates DROP INDEX idx_facility`);
+          console.log('✅ Dropped idx_facility index');
+        } catch (e) {
+          // Index might not exist, ignore
+        }
+        // Then rename columns
+        await db.query(`ALTER TABLE candidates CHANGE COLUMN facility_name youth_care_experience TEXT`);
+        await db.query(`ALTER TABLE candidates CHANGE COLUMN facility_location fun_fact TEXT`);
+        console.log('✅ Migrated candidates table columns');
+      }
+    } catch (migrationError) {
+      console.log('Migration note:', migrationError.message);
+    }
 
     // Create facilities table
     await db.query(`
