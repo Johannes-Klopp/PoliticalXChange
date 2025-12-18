@@ -86,9 +86,9 @@ const submitVoteWithEmail = async (req, res) => {
       return res.status(400).json({ error: 'Mindestens ein Kandidat muss ausgewählt werden' });
     }
 
-    if (candidateIds.length > 3) {
+    if (candidateIds.length > 8) {
       await connection.rollback();
-      return res.status(400).json({ error: 'Maximal 3 Kandidaten können gewählt werden' });
+      return res.status(400).json({ error: 'Maximal 8 Kandidaten können gewählt werden' });
     }
 
     // Remove duplicates
