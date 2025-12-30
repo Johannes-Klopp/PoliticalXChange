@@ -321,16 +321,19 @@ Das Landesheimrat-Wahl Team
 
 // Send voting reminder email
 const sendVotingReminderEmail = async (email, groupName, votingLink) => {
-  const subject = 'Erinnerung: Noch nicht abgestimmt - Landesheimrat-Wahl';
+  const subject = 'Erinnerung: Nur noch bis 31.12.2025 wählen! - Landesheimrat-Wahl';
   const text = `
 Hallo ${groupName},
 
-Sie haben noch nicht an der Landesheimrat-Wahl teilgenommen. Die Wahl läuft noch - nutzen Sie Ihre Chance!
+Sie haben noch nicht an der Landesheimrat-Wahl teilgenommen.
+
+ACHTUNG: Die Wahl endet am 31.12.2025 - nutzen Sie jetzt Ihre Chance!
 
 Klicken Sie hier, um zur Wahl zu gelangen:
 ${votingLink}
 
 Wichtige Hinweise:
+- Nur noch bis zum 31.12.2025 kann gewählt werden
 - Pro Wohngruppe können 8 Stimmen abgegeben werden
 - Die Wahl ist anonym
 - Melden Sie sich mit der gleichen E-Mail-Adresse an, mit der Sie sich für den Newsletter registriert haben
@@ -347,15 +350,16 @@ Das Landesheimrat-Wahl Team
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Erinnerung: Wahl</title>
+  <title>Erinnerung: Wahl endet bald!</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
-    <h1 style="color: white; margin: 0; font-size: 28px;">Erinnerung: Noch nicht abgestimmt!</h1>
+    <h1 style="color: white; margin: 0; font-size: 28px;">Erinnerung: Nur noch bis 31.12.2025!</h1>
   </div>
 
   <p>Hallo <strong>${groupName}</strong>,</p>
-  <p>Sie haben noch nicht an der Landesheimrat-Wahl teilgenommen. Die Wahl läuft noch - <strong>nutzen Sie Ihre Chance!</strong></p>
+  <p>Sie haben noch nicht an der Landesheimrat-Wahl teilgenommen.</p>
+  <p style="font-size: 18px; color: #d97706; font-weight: bold;">⚠️ Die Wahl endet am 31.12.2025 - nutzen Sie jetzt Ihre Chance!</p>
 
   <div style="text-align: center; margin: 30px 0;">
     <a href="${votingLink}" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block;">
@@ -366,6 +370,7 @@ Das Landesheimrat-Wahl Team
   <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
     <h3 style="color: #d97706; margin-top: 0;">Wichtige Hinweise:</h3>
     <ul style="margin-bottom: 0;">
+      <li><strong>Nur noch bis zum 31.12.2025</strong> kann gewählt werden</li>
       <li>Pro Wohngruppe können <strong>8 Stimmen</strong> abgegeben werden</li>
       <li>Die Wahl ist <strong>anonym</strong></li>
       <li>Melden Sie sich mit der <strong>gleichen E-Mail-Adresse</strong> an, mit der Sie sich für den Newsletter registriert haben</li>
