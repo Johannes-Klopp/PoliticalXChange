@@ -7,18 +7,22 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import CandidateDetailsPage from './pages/CandidateDetailsPage';
 import NewsletterSubscription from './pages/NewsletterSubscription';
+import ElectionGuard from './components/ElectionGuard';
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/vote/:token" element={<VotingPage />} />
-          <Route path="/email-voting" element={<EmailVotingPage />} />
-          <Route path="/vote" element={<VotePage />} />
-          <Route path="/candidate/:id" element={<CandidateDetailsPage />} />
-          <Route path="/newsletter" element={<NewsletterSubscription />} />
+          {/* Öffentliche Seiten - bei geschlossener Wahl gesperrt */}
+          <Route path="/" element={<ElectionGuard><HomePage /></ElectionGuard>} />
+          <Route path="/vote/:token" element={<ElectionGuard><VotingPage /></ElectionGuard>} />
+          <Route path="/email-voting" element={<ElectionGuard><EmailVotingPage /></ElectionGuard>} />
+          <Route path="/vote" element={<ElectionGuard><VotePage /></ElectionGuard>} />
+          <Route path="/candidate/:id" element={<ElectionGuard><CandidateDetailsPage /></ElectionGuard>} />
+          <Route path="/newsletter" element={<ElectionGuard><NewsletterSubscription /></ElectionGuard>} />
+
+          {/* Admin-Seiten - immer zugänglich */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
         </Routes>

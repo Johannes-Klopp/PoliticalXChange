@@ -15,6 +15,7 @@ const newsletterRoutes = require('./routes/newsletter');
 const auditRoutes = require('./routes/audit');
 const emailTestRoutes = require('./routes/emailTest');
 const campaignRoutes = require('./routes/campaign');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -50,6 +51,7 @@ app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/email-test', emailTestRoutes);
 app.use('/api/campaign', campaignRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -222,6 +224,21 @@ async function initializeDatabaseSchema() {
         INDEX idx_action (action),
         INDEX idx_created (created_at)
       ) ENGINE=InnoDB
+    `);
+
+    // Create settings table
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        setting_key VARCHAR(100) NOT NULL UNIQUE,
+        setting_value TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB
+    `);
+
+    // Initialize election_closed setting if not exists
+    await db.query(`
+      INSERT IGNORE INTO settings (setting_key, setting_value) VALUES ('election_closed', 'false')
     `);
 
     console.log('✅ Database schema initialized');

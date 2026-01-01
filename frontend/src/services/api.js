@@ -60,4 +60,8 @@ export const sendVotingStartEmail = (email = null) => api.post('/campaign/send-v
 export const sendVotingReminderEmail = (email = null) => api.post('/campaign/send-reminder', { email });
 export const getCampaignStats = () => api.get('/campaign/stats');
 
+// Settings
+export const getElectionStatus = () => api.get('/settings/election-status');
+export const setElectionStatus = (closed) => api.post('/settings/election-status', { closed });
+
 export default api;

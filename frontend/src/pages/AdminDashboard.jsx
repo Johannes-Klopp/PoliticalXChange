@@ -15,6 +15,8 @@ import {
   sendVotingStartEmail,
   sendVotingReminderEmail,
   getCampaignStats,
+  getElectionStatus,
+  setElectionStatus,
 } from '../services/api';
 
 export default function AdminDashboard() {
@@ -41,6 +43,7 @@ export default function AdminDashboard() {
   const [campaignStats, setCampaignStats] = useState({ totalSubscribers: 0, votedSubscribers: 0, notVotedSubscribers: 0 });
   const [selectedEmail, setSelectedEmail] = useState('');
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [electionClosed, setElectionClosed] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -54,6 +57,10 @@ export default function AdminDashboard() {
   const loadData = async () => {
     setLoading(true);
     try {
+      // Always load election status
+      const statusRes = await getElectionStatus();
+      setElectionClosed(statusRes.data.electionClosed);
+
       if (activeTab === 'candidates') {
         const response = await getCandidates();
         setCandidates(response.data.candidates);
@@ -148,6 +155,23 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleToggleElection = async () => {
+    const newStatus = !electionClosed;
+    const confirmMsg = newStatus
+      ? 'Wahl wirklich schließen? Niemand kann mehr abstimmen.'
+      : 'Wahl wieder öffnen?';
+
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      await setElectionStatus(newStatus);
+      setElectionClosed(newStatus);
+      setSuccess(newStatus ? 'Wahl wurde geschlossen' : 'Wahl wurde geöffnet');
+    } catch (err) {
+      setError('Fehler beim Ändern des Wahlstatus');
+    }
+  };
+
   const tabs = [
     { id: 'statistics', label: 'Statistiken', icon: 'M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z' },
     { id: 'candidates', label: 'Kandidaten', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
@@ -168,15 +192,42 @@ export default function AdminDashboard() {
               <h1 className="text-3xl font-extrabold tracking-tight">Admin Dashboard</h1>
               <p className="text-primary-100 text-sm mt-1">Landesheimrat-Wahl Verwaltung</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="group flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-5 py-2.5 rounded-xl transition-all duration-300 border border-white/20"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-              </svg>
-              <span className="font-semibold">Abmelden</span>
-            </button>
+            <div className="flex items-center gap-4">
+              {/* Wahl Status Toggle */}
+              <button
+                onClick={handleToggleElection}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+                  electionClosed
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'bg-green-500 hover:bg-green-600 text-white'
+                }`}
+              >
+                {electionClosed ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    Wahl geschlossen
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                    </svg>
+                    Wahl offen
+                  </>
+                )}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="group flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-5 py-2.5 rounded-xl transition-all duration-300 border border-white/20"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                <span className="font-semibold">Abmelden</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
