@@ -550,10 +550,10 @@ const exportResults = async (req, res) => {
   }
 };
 
-// Get public voting results (Top 8 only, no admin info)
+// Get public voting results (all candidates)
 const getPublicResults = async (req, res) => {
   try {
-    // Top 8 Kandidaten mit Stimmzahlen
+    // Alle Kandidaten mit Stimmzahlen
     const [results] = await db.query(`
       SELECT
         c.id,
@@ -566,7 +566,6 @@ const getPublicResults = async (req, res) => {
       LEFT JOIN votes v ON c.id = v.candidate_id
       GROUP BY c.id
       ORDER BY vote_count DESC, c.name ASC
-      LIMIT 8
     `);
 
     // Gesamtzahl der Stimmen
