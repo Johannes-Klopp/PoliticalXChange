@@ -64,4 +64,10 @@ export const getCampaignStats = () => api.get('/campaign/stats');
 export const getElectionStatus = () => api.get('/settings/election-status');
 export const setElectionStatus = (closed) => api.post('/settings/election-status', { closed });
 
+// Public Results
+export const getPublicResults = () => api.get('/votes/public-results');
+
+// Campaign - Results Email
+export const sendResultsEmail = () => api.post('/campaign/send-results');
+
 export default api;

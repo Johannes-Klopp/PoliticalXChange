@@ -391,6 +391,89 @@ Das Landesheimrat-Wahl Team
   return sendEmail({ to: email, subject, text, html });
 };
 
+// Send election results email
+const sendElectionResultsEmail = async (email, groupName, winners, resultsLink) => {
+  const subject = 'Die Wahlergebnisse sind da! - Landesheimrat-Wahl 2025';
+
+  const winnersList = winners.map((w, i) => `${i + 1}. ${w.name} (${w.vote_count} Stimmen)`).join('\n');
+
+  const text = `
+Hallo ${groupName},
+
+Die Landesheimrat-Wahl 2025 ist abgeschlossen und die Ergebnisse stehen fest!
+
+Die Top 8 Gewählten:
+${winnersList}
+
+Herzlichen Glückwunsch an alle Gewählten!
+
+Die vollständigen Ergebnisse finden Sie hier:
+${resultsLink}
+
+Vielen Dank für Ihre Teilnahme an der Wahl!
+
+Mit freundlichen Grüßen
+Das Landesheimrat-Wahl Team
+  `;
+
+  const winnersHtml = winners.map((w, i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`;
+    return `
+      <tr style="border-bottom: 1px solid #e5e7eb;">
+        <td style="padding: 12px; font-size: 20px;">${medal}</td>
+        <td style="padding: 12px; font-weight: bold;">${w.name}</td>
+        <td style="padding: 12px; text-align: right; color: #059669; font-weight: bold;">${w.vote_count} Stimmen</td>
+      </tr>
+    `;
+  }).join('');
+
+  const html = `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wahlergebnisse</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+    <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Die Wahlergebnisse sind da!</h1>
+  </div>
+
+  <p>Hallo <strong>${groupName}</strong>,</p>
+  <p>Die Landesheimrat-Wahl 2025 ist abgeschlossen und die Ergebnisse stehen fest!</p>
+
+  <div style="background-color: #f0fdf4; border-radius: 12px; padding: 20px; margin: 20px 0;">
+    <h2 style="color: #059669; margin-top: 0; text-align: center;">Die Top 8 Gewählten</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      ${winnersHtml}
+    </table>
+  </div>
+
+  <p style="text-align: center; font-size: 18px; color: #059669; font-weight: bold;">
+    🎊 Herzlichen Glückwunsch an alle Gewählten! 🎊
+  </p>
+
+  <div style="text-align: center; margin: 30px 0;">
+    <a href="${resultsLink}" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-weight: bold; font-size: 18px; display: inline-block;">
+      Vollständige Ergebnisse ansehen
+    </a>
+  </div>
+
+  <p>Vielen Dank für Ihre Teilnahme an der Wahl!</p>
+
+  <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+  <p style="font-size: 12px; color: #666;">
+    Diese E-Mail wurde im Auftrag des Landesheimrats versendet.<br>
+    Political XChange i.G. | Eichenweg 2 | 35452 Heuchelheim
+  </p>
+</body>
+</html>
+  `;
+
+  return sendEmail({ to: email, subject, text, html });
+};
+
 module.exports = {
   sendEmail,
   sendVotingTokenEmail,
@@ -398,4 +481,5 @@ module.exports = {
   sendNewsletterNotification,
   sendVotingStartEmail,
   sendVotingReminderEmail,
+  sendElectionResultsEmail,
 };

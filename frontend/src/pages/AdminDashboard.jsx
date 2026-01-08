@@ -14,6 +14,7 @@ import {
   deleteNewsletterSubscriber,
   sendVotingStartEmail,
   sendVotingReminderEmail,
+  sendResultsEmail,
   getCampaignStats,
   getElectionStatus,
   setElectionStatus,
@@ -707,6 +708,66 @@ export default function AdminDashboard() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                           </svg>
                           <span>Erinnerung senden</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Ergebnis-Email */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-100">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1 h-8 bg-gradient-to-b from-emerald-500 to-emerald-700 rounded-full"></div>
+                    <h2 className="text-2xl font-extrabold text-gray-900">Wahlergebnis-E-Mail senden</h2>
+                  </div>
+                  <p className="text-gray-600 mb-6">
+                    Sendet die Wahlergebnisse mit den <strong>Top 8 Gewählten</strong> an alle registrierten Wohngruppen.
+                    Die E-Mail enthält auch einen Link zur öffentlichen Ergebnisseite.
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <a
+                      href="/ergebnisse"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-600 hover:text-emerald-800 font-medium underline"
+                    >
+                      Ergebnisseite ansehen
+                    </a>
+                    <button
+                      onClick={async () => {
+                        if (!window.confirm(`Wahlergebnis-E-Mail an alle ${campaignStats.totalSubscribers} Wohngruppen senden?`)) return;
+                        setSendingEmail(true);
+                        setError('');
+                        setSuccess('');
+                        try {
+                          const res = await sendResultsEmail();
+                          setSuccess(`${res.data.results.sent} Ergebnis-E-Mail(s) erfolgreich versendet`);
+                          if (res.data.results.failed > 0) {
+                            setError(`${res.data.results.failed} E-Mail(s) fehlgeschlagen`);
+                          }
+                        } catch (err) {
+                          setError(err.response?.data?.error || 'Fehler beim Versenden');
+                        } finally {
+                          setSendingEmail(false);
+                        }
+                      }}
+                      disabled={sendingEmail || campaignStats.totalSubscribers === 0}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold px-8 py-3 rounded-lg transition-all disabled:opacity-50"
+                    >
+                      {sendingEmail ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Wird gesendet...</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                          </svg>
+                          <span>Ergebnisse versenden</span>
                         </>
                       )}
                     </button>

@@ -550,6 +550,44 @@ const exportResults = async (req, res) => {
   }
 };
 
+// Get public voting results (Top 8 only, no admin info)
+const getPublicResults = async (req, res) => {
+  try {
+    // Top 8 Kandidaten mit Stimmzahlen
+    const [results] = await db.query(`
+      SELECT
+        c.id,
+        c.name,
+        c.age,
+        c.youth_care_experience,
+        c.fun_fact,
+        COUNT(v.id) as vote_count
+      FROM candidates c
+      LEFT JOIN votes v ON c.id = v.candidate_id
+      GROUP BY c.id
+      ORDER BY vote_count DESC, c.name ASC
+      LIMIT 8
+    `);
+
+    // Gesamtzahl der Stimmen
+    const [totalVotes] = await db.query('SELECT COUNT(*) as total FROM votes');
+
+    // Anzahl der Wähler
+    const [uniqueVoters] = await db.query('SELECT COUNT(DISTINCT vote_session_id) as count FROM votes WHERE vote_session_id IS NOT NULL');
+
+    res.json({
+      winners: results,
+      statistics: {
+        totalVotes: totalVotes[0].total,
+        totalVoters: uniqueVoters[0].count
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching public results:', error);
+    res.status(500).json({ error: 'Fehler beim Laden der Ergebnisse' });
+  }
+};
+
 module.exports = {
   submitVote,
   submitVoteWithEmail,
@@ -557,4 +595,5 @@ module.exports = {
   verifyToken,
   getResults,
   exportResults,
+  getPublicResults,
 };

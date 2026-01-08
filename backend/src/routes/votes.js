@@ -9,6 +9,7 @@ router.get('/verify-token', voteController.verifyToken);
 router.post('/verify-email', voteController.verifyEmail);
 router.post('/submit', votingLimiter, voteController.submitVoteWithEmail);
 router.post('/submit-token', votingLimiter, verifyVotingToken, voteController.submitVote);
+router.get('/public-results', voteController.getPublicResults);
 
 // Admin routes
 router.get('/results', verifyToken, verifyAdmin, voteController.getResults);

@@ -15,4 +15,7 @@ router.post('/send-reminder', campaignController.sendVotingReminder);
 // Get email statistics
 router.get('/stats', campaignController.getEmailStats);
 
+// Send election results email to all subscribers
+router.post('/send-results', campaignController.sendResultsEmail);
+
 module.exports = router;

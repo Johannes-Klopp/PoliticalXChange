@@ -1,5 +1,5 @@
 const db = require('../config/database');
-const { sendVotingStartEmail, sendVotingReminderEmail } = require('../utils/email');
+const { sendVotingStartEmail, sendVotingReminderEmail, sendElectionResultsEmail } = require('../utils/email');
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -133,8 +133,62 @@ const getEmailStats = async (req, res) => {
   }
 };
 
+// Send election results email to all subscribers
+const sendResultsEmail = async (req, res) => {
+  try {
+    const resultsLink = `${FRONTEND_URL}/ergebnisse`;
+
+    // Get Top 8 winners
+    const [winners] = await db.query(`
+      SELECT c.name, COUNT(v.id) as vote_count
+      FROM candidates c
+      LEFT JOIN votes v ON c.id = v.candidate_id
+      GROUP BY c.id
+      ORDER BY vote_count DESC, c.name ASC
+      LIMIT 8
+    `);
+
+    // Get all confirmed subscribers
+    const [subscribers] = await db.query(
+      'SELECT email, group_name, facility_name FROM newsletter_subscriptions WHERE confirmed = TRUE'
+    );
+
+    if (subscribers.length === 0) {
+      return res.status(400).json({ error: 'Keine Empfänger gefunden' });
+    }
+
+    const results = {
+      total: subscribers.length,
+      sent: 0,
+      failed: 0,
+      errors: []
+    };
+
+    for (const sub of subscribers) {
+      const groupName = sub.group_name || sub.facility_name || 'Wohngruppe';
+      const result = await sendElectionResultsEmail(sub.email, groupName, winners, resultsLink);
+
+      if (result.success) {
+        results.sent++;
+      } else {
+        results.failed++;
+        results.errors.push({ email: sub.email, error: result.error });
+      }
+    }
+
+    res.json({
+      message: `Ergebnis-E-Mails versendet`,
+      results
+    });
+  } catch (error) {
+    console.error('Error sending results emails:', error);
+    res.status(500).json({ error: 'Fehler beim Versenden der E-Mails' });
+  }
+};
+
 module.exports = {
   sendVotingStart,
   sendVotingReminder,
   getEmailStats,
+  sendResultsEmail,
 };

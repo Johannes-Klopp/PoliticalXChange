@@ -7,6 +7,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import CandidateDetailsPage from './pages/CandidateDetailsPage';
 import NewsletterSubscription from './pages/NewsletterSubscription';
+import ResultsPage from './pages/ResultsPage';
 import ElectionGuard from './components/ElectionGuard';
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
           <Route path="/vote" element={<ElectionGuard><VotePage /></ElectionGuard>} />
           <Route path="/candidate/:id" element={<ElectionGuard><CandidateDetailsPage /></ElectionGuard>} />
           <Route path="/newsletter" element={<ElectionGuard><NewsletterSubscription /></ElectionGuard>} />
+
+          {/* Ergebnisseite - immer zugänglich */}
+          <Route path="/ergebnisse" element={<ResultsPage />} />
 
           {/* Admin-Seiten - immer zugänglich */}
           <Route path="/admin/login" element={<AdminLogin />} />
